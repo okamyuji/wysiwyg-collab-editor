@@ -57,10 +57,15 @@ async function createPdfBlob(draft: DraftExportInput) {
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
   const fontBytes = await fetch(notoSansJpRegularUrl).then((response) => response.arrayBuffer());
-  const font = await pdf.embedFont(fontBytes, { subset: true });
-  let page = pdf.addPage([595.28, 841.89]);
+  // ponytail: subset:false because @pdf-lib/fontkit drops CJK glyphs when subsetting.
+  // Upgrade path: pre-subset the font offline (pyftsubset) and re-enable subset:true.
+  const font = await pdf.embedFont(fontBytes, { subset: false });
+  const pageWidth = 595.28;
+  const pageHeight = 841.89;
   const margin = 54;
-  let cursorY = 790;
+  const maxLineWidth = pageWidth - margin * 2;
+  let page = pdf.addPage([pageWidth, pageHeight]);
+  let cursorY = pageHeight - margin;
 
   const drawLine = (segments: RichSegment[], size: number) => {
     let cursorX = margin;
@@ -104,17 +109,21 @@ async function createPdfBlob(draft: DraftExportInput) {
     }
     cursorY -= size + 9;
     if (cursorY < margin) {
-      page = pdf.addPage([595.28, 841.89]);
-      cursorY = 790;
+      page = pdf.addPage([pageWidth, pageHeight]);
+      cursorY = pageHeight - margin;
     }
   };
 
-  drawLine(
+  for (const line of wrapSegmentsByWidth(
     [{ text: draft.title, bold: true, italic: false, underline: false, highlight: false }],
+    font,
     20,
-  );
+    maxLineWidth,
+  )) {
+    drawLine(line, 20);
+  }
   cursorY -= 12;
-  for (const line of wrapSegments(htmlToSegments(draft.bodyHtml), 68)) {
+  for (const line of wrapSegmentsByWidth(htmlToSegments(draft.bodyHtml), font, 12, maxLineWidth)) {
     drawLine(line, 12);
   }
   const bytes = await pdf.save();
@@ -249,22 +258,64 @@ function splitSegmentsIntoLines(segments: RichSegment[]) {
   return lines.filter((line) => line.length > 0);
 }
 
-function wrapSegments(segments: RichSegment[], maxCharacters: number) {
+interface WidthFont {
+  widthOfTextAtSize(text: string, size: number): number;
+}
+
+function wrapSegmentsByWidth(
+  segments: RichSegment[],
+  font: WidthFont,
+  size: number,
+  maxWidth: number,
+) {
   const lines: RichSegment[][] = [[]];
-  let count = 0;
-  for (const line of splitSegmentsIntoLines(segments)) {
-    for (const segment of line) {
-      for (const token of segment.text.match(/\S+\s*|\s+/gu) ?? []) {
-        if (count + token.length > maxCharacters && count > 0) {
+  let lineWidth = 0;
+  const pushSegment = (style: RichSegment, text: string) => {
+    if (!text) return;
+    const last = lines.at(-1)!;
+    const prev = last.at(-1);
+    if (
+      prev &&
+      prev.bold === style.bold &&
+      prev.italic === style.italic &&
+      prev.underline === style.underline &&
+      prev.highlight === style.highlight
+    ) {
+      prev.text += text;
+    } else {
+      last.push({ ...style, text });
+    }
+  };
+  // Iterate by grapheme cluster, not code point, so combining marks and ZWJ
+  // emoji sequences don't get split across line breaks.
+  const segmenter =
+    typeof Intl !== "undefined" && typeof Intl.Segmenter === "function"
+      ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
+      : null;
+  const graphemes = (text: string) =>
+    segmenter ? Array.from(segmenter.segment(text), (s) => s.segment) : Array.from(text);
+  for (const inputLine of splitSegmentsIntoLines(segments)) {
+    for (const segment of inputLine) {
+      let buffer = "";
+      let bufferWidth = 0;
+      for (const ch of graphemes(segment.text)) {
+        const chWidth = font.widthOfTextAtSize(ch, size);
+        if (lineWidth + bufferWidth + chWidth > maxWidth && (buffer || lineWidth > 0)) {
+          pushSegment(segment, buffer);
           lines.push([]);
-          count = 0;
+          lineWidth = 0;
+          buffer = ch;
+          bufferWidth = chWidth;
+        } else {
+          buffer += ch;
+          bufferWidth += chWidth;
         }
-        lines.at(-1)!.push({ ...segment, text: token });
-        count += token.length;
       }
+      pushSegment(segment, buffer);
+      lineWidth += bufferWidth;
     }
     lines.push([]);
-    count = 0;
+    lineWidth = 0;
   }
   return lines.filter((line) => line.length > 0);
 }

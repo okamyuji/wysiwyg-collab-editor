@@ -3,6 +3,14 @@ import { sanitizeRichTextHtml } from "./rich-text.js";
 
 const draftStorageKey = "wysiwyg-collab-editor:draft";
 const draftChannelName = "wysiwyg-collab-editor:draft-sync";
+const presenceChannelName = "wysiwyg-collab-editor:presence";
+const presenceTimeoutMs = 15_000;
+const presenceHeartbeatMs = 5_000;
+
+type PresenceMessage =
+  | { kind: "hello"; id: string }
+  | { kind: "heartbeat"; id: string }
+  | { kind: "bye"; id: string };
 
 const messages = {
   en: {
@@ -11,7 +19,7 @@ const messages = {
     notSaved: "Not saved",
     saveDraft: "Save draft",
     online: "Online",
-    collaborators: "2 collaborators",
+    collaborator: (count: number) => (count === 1 ? "1 collaborator" : `${count} collaborators`),
     workspaceNav: "Workspace",
     workspace: "Editor workspace",
     documentTools: "Document tools",
@@ -60,7 +68,7 @@ const messages = {
     notSaved: "未保存",
     saveDraft: "下書きを保存",
     online: "オンライン",
-    collaborators: "共同編集中 2 名",
+    collaborator: (count: number) => `共同編集中 ${count} 名`,
     workspaceNav: "ワークスペース",
     workspace: "エディターワークスペース",
     documentTools: "文書ツール",
@@ -181,6 +189,7 @@ export function App() {
   const [shareEnabled, setShareEnabled] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("PDF");
   const [exportStatus, setExportStatus] = useState("");
+  const [collaboratorCount, setCollaboratorCount] = useState(1);
   const editorRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<BroadcastChannel | null>(null);
 
@@ -224,6 +233,68 @@ export function App() {
       window.removeEventListener("storage", onStorage);
       channel.close();
       channelRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window.BroadcastChannel === "undefined") return undefined;
+    // ponytail: BroadcastChannel only counts same-browser tabs. Real cross-device
+    // presence ships with the WebSocket server in ADR-0015; until then this is
+    // honest about how many editors are visible.
+    const selfId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    const peers = new Map<string, number>();
+    peers.set(selfId, Date.now());
+    const channel = new BroadcastChannel(presenceChannelName);
+    const recompute = () => {
+      const cutoff = Date.now() - presenceTimeoutMs;
+      for (const [id, lastSeen] of peers) {
+        if (lastSeen < cutoff && id !== selfId) peers.delete(id);
+      }
+      setCollaboratorCount(Math.max(1, peers.size));
+    };
+    channel.onmessage = (event: MessageEvent<PresenceMessage>) => {
+      const message = event.data;
+      if (message.id === selfId) return;
+      if (message.kind === "bye") {
+        peers.delete(message.id);
+      } else {
+        peers.set(message.id, Date.now());
+        if (message.kind === "hello") {
+          channel.postMessage({ kind: "heartbeat", id: selfId } satisfies PresenceMessage);
+        }
+      }
+      recompute();
+    };
+    const sayHello = () => {
+      peers.set(selfId, Date.now());
+      channel.postMessage({ kind: "hello", id: selfId } satisfies PresenceMessage);
+      recompute();
+    };
+    sayHello();
+    const heartbeat = window.setInterval(() => {
+      peers.set(selfId, Date.now());
+      channel.postMessage({ kind: "heartbeat", id: selfId } satisfies PresenceMessage);
+      recompute();
+    }, presenceHeartbeatMs);
+    // Browsers throttle setInterval in hidden tabs down to ~1/min, so a
+    // backgrounded peer can miss the 15s timeout. Re-broadcasting hello on
+    // visibility/focus regain lets others re-discover us without the count
+    // flapping.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") sayHello();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", sayHello);
+    return () => {
+      window.clearInterval(heartbeat);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", sayHello);
+      try {
+        channel.postMessage({ kind: "bye", id: selfId } satisfies PresenceMessage);
+      } catch {
+        // channel already closed
+      }
+      channel.close();
     };
   }, []);
 
@@ -292,7 +363,7 @@ export function App() {
         </div>
         <div className="topbar-actions">
           <span className="presence-pill" data-testid="presence-status">
-            {t.online} · {t.collaborators}
+            {t.online} · {t.collaborator(collaboratorCount)}
           </span>
           <span className="sync-status" data-testid="sync-status">
             {t.saved}: {savedAt}

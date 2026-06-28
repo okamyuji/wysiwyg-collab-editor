@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter ./apps/web dev & pnpm --filter ./apps/server dev",
+    "dev": "node tools/dev.mjs",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "format": "vp fmt --check",
