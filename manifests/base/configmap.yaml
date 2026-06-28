@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-server-config
+  namespace: wysiwyg-collab
+data:
+  APP_BASE_URL: "https://REPLACE_WITH_PROD_HOST"
+  SESSION_COOKIE_DOMAIN: "REPLACE_WITH_PROD_HOST"
+  DB_HOST: "postgres.wysiwyg-collab.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "wysiwyg_collab"
+  DB_SSL_MODE: "require"
+  DB_POOL_MAX: "20"
+  REDIS_URL: "rediss://redis.wysiwyg-collab.svc.cluster.local:6379/0"
+  REDIS_TLS: "true"
+  S3_ENDPOINT: "https://minio.wysiwyg-collab.svc.cluster.local:9000"
+  S3_REGION: "us-east-1"
+  S3_BUCKET_IMAGES: "docs-images"
+  S3_BUCKET_EXPORTS: "docs-exports"
+  S3_FORCE_PATH_STYLE: "true"
+  AUDIT_CURRENT_SALT_VERSION: "1"
+  EXPORT_WORKER_REPLICAS: "2"
+  EXPORT_WORKER_CONCURRENCY: "2"
+  LOG_LEVEL: "info"
+  LOKI_PUSH_URL: "https://loki.example.invalid/loki/api/v1/push"
+  PROXY_REJECT_BEARER_TOKEN: "REPLACE_FROM_SECRET"

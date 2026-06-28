@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-server
+  namespace: wysiwyg-collab
+spec:
+  type: ClusterIP
+  selector:
+    app: app-server
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+    - name: metrics
+      port: 9100
+      targetPort: 9100

@@ -1,0 +1,29 @@
+{
+  "name": "wysiwyg-collab-editor",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter ./apps/web dev & pnpm --filter ./apps/server dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "format": "vp fmt --check",
+    "format:write": "vp fmt . --write",
+    "lint": "vp lint apps packages e2e tools vite.config.ts --ignore-pattern dist --ignore-pattern node_modules --deny-warnings",
+    "check": "pnpm -r check",
+    "e2e": "pnpm --filter ./e2e test:e2e",
+    "security:owasp": "pnpm audit --audit-level high && gitleaks detect --no-git --source . --config .gitleaks.toml --redact --verbose && uvx semgrep scan --config p/owasp-top-ten --config p/typescript --config p/javascript --config p/nodejsscan --config p/jwt --config p/security-audit --config p/sql-injection --config p/xss --severity ERROR --severity WARNING --exclude node_modules --exclude dist --exclude coverage --exclude e2e --exclude .wolf --error --metrics=off .",
+    "migrate": "node tools/migrate.mjs up",
+    "migrate:dry": "node tools/migrate.mjs dry",
+    "seed:local": "node tools/seed-local.mjs",
+    "traceability:check": "node tools/traceability_check.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^6.0.3",
+    "vite-plus": "^0.2.1"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

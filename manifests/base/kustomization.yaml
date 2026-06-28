@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: wysiwyg-collab
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secrets.yaml.example
+  - app-server-deployment.yaml
+  - app-server-service.yaml
+  - app-server-hpa.yaml
+  - export-worker-deployment.yaml
+  - ingress.yaml
+  - network-policies.yaml
+  - pdb.yaml

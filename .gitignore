@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.turbo/
+.vite/
+.vite-inspect/
+
+# Test and coverage outputs
+coverage/
+test-results/
+playwright-report/
+blob-report/
+e2e/output/
+
+# Runtime and local data
+*.log
+*.pid
+*.sqlite
+*.sqlite3
+*.db
+.data/
+.minio/
+tmp/
+temp/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!*.env.example
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Package manager caches
+.pnpm-store/
+.npm/
+.yarn/
+
+# Security and scanner outputs
+semgrep.sarif
+gitleaks-report.*

@@ -1,0 +1,18 @@
+title = "wysiwyg-collab-editor gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "audit-hash-salt"
+description = "AUDIT_HASH_SALT in source"
+regex = '''AUDIT_HASH_SALT_v\d+\s*=\s*[A-Za-z0-9+/=]{32,}'''
+tags = ["secret"]
+
+[[rules.allowlists]]
+description = "allow .env.example placeholder"
+paths = ['''^\.env\.example$''']
+
+[allowlist]
+description = "global ignore"
+paths = ['''(^|/)docs/''', '''(^|/)tests/fixtures/''', '''(^|/)e2e/fixtures/''']

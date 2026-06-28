@@ -1,0 +1,13 @@
+{
+  "name": "@wysiwyg-collab-editor/doc-canonical",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  }
+}

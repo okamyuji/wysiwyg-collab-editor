@@ -1,0 +1,21 @@
+{
+  "name": "@wysiwyg-collab-editor/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./api-schemas": "./dist/api-schemas/index.js",
+    "./constants": "./dist/constants/index.js",
+    "./delta-types": "./dist/delta-types/index.js",
+    "./error-codes": "./dist/error-codes/index.js",
+    "./palette": "./dist/palette/index.js"
+  },
+  "dependencies": {
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  }
+}

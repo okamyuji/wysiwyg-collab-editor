@@ -1,0 +1,12 @@
+severity: HIGH,CRITICAL
+ignore-unfixed: false
+exit-code: 1
+format: sarif
+output: trivy-results.sarif
+scan:
+  - vuln
+  - secret
+  - misconfig
+skip-files:
+  - "docs/**"
+  - "**/*.md"

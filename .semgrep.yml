@@ -1,0 +1,12 @@
+paths:
+  exclude:
+    - "node_modules"
+    - "dist"
+    - "coverage"
+    - "**/*.test.ts"
+    - "**/*.integ.ts"
+    - "e2e/**"
+
+severity:
+  - ERROR
+  - WARNING

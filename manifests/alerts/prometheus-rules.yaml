@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: wysiwyg-collab
+  namespace: wysiwyg-collab
+spec:
+  groups:
+    - name: wysiwyg.slo
+      rules:
+        - alert: WebSocketSloFastBurn
+          expr: (1 - sum(rate(websocket_handshake_success_total[1h])) / sum(rate(websocket_handshake_total[1h]))) > 0.01
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: WebSocket SLO fast burn
+        - alert: OtAckLatencyHigh
+          expr: histogram_quantile(0.95, sum(rate(ot_ack_latency_seconds_bucket[5m])) by (le)) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: OT ACK p95 above 800ms
+        - alert: RevisionReachabilityViolation
+          expr: increase(revision_reachability_violation_total[5m]) > 0
+          labels:
+            severity: critical
+          annotations:
+            summary: version reachability invariant violated
+            runbook: docs/design/detailed/06-version-and-ops-compaction.md
+        - alert: CapacityRejectHigh
+          expr: sum(rate(capacity_reject_subscribe_total[15m]) + rate(capacity_reject_connect_total[15m]) + rate(capacity_reject_proxy_total[15m])) > 1
+          for: 15m
+          labels:
+            severity: warning
+        - alert: CspViolationHigh
+          expr: increase(csp_violation_total[15m]) > 10
+          labels:
+            severity: warning

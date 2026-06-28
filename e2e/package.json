@@ -1,0 +1,15 @@
+{
+  "name": "@wysiwyg-collab-editor/e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test:e2e": "env -u FORCE_COLOR -u NO_COLOR playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "fflate": "^0.8.3",
+    "pdf-lib": "^1.17.1",
+    "typescript": "^6.0.3"
+  }
+}

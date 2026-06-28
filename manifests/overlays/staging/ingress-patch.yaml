@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-server
+  namespace: wysiwyg-collab
+spec:
+  tls:
+    - hosts:
+        - staging.example.com
+      secretName: app-server-tls
+  rules:
+    - host: staging.example.com

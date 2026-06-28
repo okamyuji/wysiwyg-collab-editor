@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: wysiwyg-collab
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-server-allow
+  namespace: wysiwyg-collab
+spec:
+  podSelector:
+    matchLabels:
+      app: app-server
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - ports:
+        - port: 3000
+        - port: 9100
+  egress:
+    - ports:
+        - port: 5432
+        - port: 6379
+        - port: 9000
+        - port: 587
+        - port: 53
+          protocol: UDP

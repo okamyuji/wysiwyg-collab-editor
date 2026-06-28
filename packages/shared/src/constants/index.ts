@@ -1,0 +1,106 @@
+export const AUTH_ARGON2ID_MEMORY_KIBIBYTES = 19456;
+export const AUTH_ARGON2ID_ITERATIONS = 2;
+export const AUTH_ARGON2ID_PARALLELISM = 1;
+export const AUTH_ARGON2ID_OUTPUT_BYTES = 32;
+export const AUTH_ARGON2ID_SALT_BYTES = 16;
+export const AUTH_PASSWORD_MIN_LENGTH = 12;
+export const AUTH_LOGIN_FAIL_USER_WINDOW_SECONDS = 600;
+export const AUTH_LOGIN_FAIL_USER_THRESHOLD = 5;
+export const AUTH_LOGIN_BLOCK_USER_SECONDS = 600;
+export const AUTH_LOGIN_FAIL_IP_WINDOW_SECONDS = 900;
+export const AUTH_LOGIN_FAIL_IP_THRESHOLD = 20;
+export const AUTH_LOGIN_BLOCK_IP_SECONDS = 1800;
+export const AUTH_SESSION_TTL_SECONDS = 1209600;
+export const AUTH_PWRESET_TTL_SECONDS = 3600;
+export const AUTH_EMAIL_VERIFY_TTL_SECONDS = 3600;
+export const AUTH_GUEST_WS_TOKEN_TTL_SECONDS = 900;
+
+export const OT_ACK_REDIS_TTL_SECONDS = 604800;
+export const OT_ACK_SNAPSHOT_RETAIN_DAYS = 30;
+export const OT_RECONNECT_INITIAL_SECONDS = 1;
+export const OT_RECONNECT_MAX_SECONDS = 30;
+export const OT_RECONNECT_MAX_ATTEMPTS = 10;
+export const OT_RESEND_FRAME_SIZE = 100;
+export const OT_APPLY_BUFFER_LIMIT = 1000;
+export const OT_SERVER_IDLE_TIMEOUT_SECONDS = 95;
+
+export const SUG_BATCH_INTERVAL_SECONDS = 600;
+export const SUG_BATCH_PER_DOC_LIMIT = 100;
+export const SUG_DELTA_MAX_BYTES = 65536;
+export const SUG_IDLE_GROUPING_SECONDS = 5;
+
+export const VER_AUTO_THRESHOLD_OPS = 100;
+export const VER_AUTO_INTERVAL_SECONDS = 3600;
+export const VER_AUTO_MAX_COUNT = 1000;
+export const VER_ARCHIVED_OPS_GRACE_HOURS = 72;
+export const VER_RESTORE_RETRY_MAX = 3;
+
+export const EXP_JOB_TIMEOUT_SECONDS = 60;
+export const EXP_HEARTBEAT_INTERVAL_SECONDS = 20;
+export const EXP_HEARTBEAT_STALL_SECONDS = 60;
+export const EXP_REAPER_INTERVAL_SECONDS = 30;
+export const EXP_REAPER_BACKOFF_BASE_SECONDS = 60;
+export const EXP_REAPER_BACKOFF_MAX_SECONDS = 600;
+export const EXP_MAX_ATTEMPT = 3;
+export const EXP_PROC_CONCURRENCY = 2;
+export const EXP_USER_CONCURRENCY = 2;
+export const EXP_DOC_CONCURRENCY = 1;
+export const EXP_POLL_MIN_SECONDS = 2;
+export const EXP_POLL_MAX_SECONDS = 30;
+export const EXP_SIGNED_URL_TTL_HOURS = 24;
+export const EXP_JOB_EXPIRE_DAYS = 7;
+export const EXP_CTE_CANDIDATE_LIMIT = 16;
+
+export const IMG_MAX_BYTES = 10485760;
+export const IMG_THUMB_SIZES = [1280, 640, 320] as const;
+export const IMG_PURGE_DELAY_HOURS = 48;
+export const IMG_PURGE_BACKOFF_BASE_SECONDS = 60;
+export const IMG_PURGE_BACKOFF_MAX_HOURS = 24;
+export const IMG_PURGE_MAX_ATTEMPT = 5;
+export const IMG_PURGE_BATCH_LIMIT = 100;
+
+export const SHR_TOKEN_BYTES = 32;
+export const SHR_EXPIRES_MAX_DAYS = 30;
+export const SHR_GUEST_WS_TOKEN_TTL_SECONDS = AUTH_GUEST_WS_TOKEN_TTL_SECONDS;
+
+export const OFF_CACHE_MAX_DOCS = 5;
+export const OFF_CACHE_MAX_IMAGES = 50;
+export const OFF_CACHE_MAX_UI_SHELLS = 1;
+
+export const DOC_DELETE_GRACE_DAYS = 30;
+export const DOC_LIST_PAGE_SIZE = 50;
+export const DOC_PURGE_CRON = "0 2 * * *";
+export const DOC_IMAGE_PURGE_CRON = "0 3 * * *";
+
+export const AUD_RETENTION_DAYS = 365;
+export const AUD_VERIFY_BATCH_CRON = "0 0 * * *";
+export const AUD_SALT_ROTATION_QUARTERS = 1;
+export const AUD_SALT_GRACE_DAYS = 30;
+export const AUD_ADVISORY_LOCK_KEY = 0x4155444954n;
+export const AUD_PARALLEL_HOLD_GENERATIONS = 4;
+
+export const RL_CSP_REPORT_WINDOW_SECONDS = 60;
+export const RL_CSP_REPORT_MAX = 10;
+export const RL_CSP_REPORT_PAYLOAD_MAX_BYTES = 8192;
+export const RL_API_GLOBAL_WINDOW_SECONDS = 60;
+export const RL_API_GLOBAL_MAX = 600;
+export const RL_IMAGE_WINDOW_SECONDS = 60;
+export const RL_IMAGE_MAX = 20;
+
+export const OPS_RTO_HOURS = 4;
+export const OPS_RPO_MINUTES = 5;
+export const OPS_BACKUP_PHYSICAL_CRON = "0 2 * * *";
+export const OPS_BACKUP_LOGICAL_CRON = "0 2 * * 6";
+export const OPS_BACKUP_RETAIN_DAYS_PHYSICAL = 30;
+export const OPS_BACKUP_RETAIN_WEEKS_LOGICAL = 12;
+export const OPS_LOG_RETAIN_DAYS_APP = 30;
+export const OPS_LOG_BUFFER_BYTES = 536870912;
+
+export const CAP_DOC_SUBSCRIBE_MAX = 30;
+export const CAP_WS_CONNECTION_MAX = 5000;
+
+export const CI_COVERAGE_STATEMENTS = 80;
+export const CI_COVERAGE_BRANCHES = 70;
+export const CI_COVERAGE_FUNCTIONS = 80;
+export const CI_COVERAGE_LINES = 80;
+export const CI_E2E_RETRIES = 1;

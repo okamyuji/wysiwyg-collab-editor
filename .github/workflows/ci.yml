@@ -1,0 +1,89 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 24
+  PNPM_VERSION: 11.9.0
+
+jobs:
+  scan-secrets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        with:
+          config-path: .gitleaks.toml
+
+  migrate-dryrun:
+    runs-on: ubuntu-24.04
+    needs: [scan-secrets]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: node tools/migrate.mjs dry
+
+  traceability-check:
+    runs-on: ubuntu-24.04
+    needs: [scan-secrets]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: node tools/traceability_check.mjs
+
+  doclint:
+    runs-on: ubuntu-24.04
+    needs: [scan-secrets]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 tools/lint_docs.py docs/
+
+  container-scan:
+    runs-on: ubuntu-24.04
+    needs: [migrate-dryrun]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          ignore-unfixed: false
+          format: sarif
+          output: trivy-fs.sarif
+
+  summary:
+    runs-on: ubuntu-24.04
+    needs:
+      - scan-secrets
+      - migrate-dryrun
+      - traceability-check
+      - doclint
+      - container-scan
+    if: always()
+    steps:
+      - run: |
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ]; then
+            echo "CI failed"
+            exit 1
+          fi
+          echo "CI passed"
