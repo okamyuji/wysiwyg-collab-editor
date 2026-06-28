@@ -5,6 +5,11 @@ on:
     - cron: "0 0 * * 0"
   workflow_dispatch:
 
+# Least-privilege default; the ZAP scan only needs to read the repo and upload
+# an artifact (upload-artifact@v4 uses its own GHA auth, not GITHUB_TOKEN).
+permissions:
+  contents: read
+
 jobs:
   zap-full:
     runs-on: ubuntu-24.04

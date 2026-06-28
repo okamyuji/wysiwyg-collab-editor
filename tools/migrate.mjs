@@ -13,9 +13,20 @@ function fail(code, message) {
   process.exit(1);
 }
 
+// Index-based parser instead of `new RegExp(`-- ${name}...`)` so a malicious or
+// typo'd CLI mode can never inject regex metacharacters (CodeQL js/regex-injection).
+const SECTION_NAMES = new Set(["up", "down"]);
 function section(sql, name) {
-  const match = sql.match(new RegExp(`-- ${name}\\n([\\s\\S]*?)(?=\\n-- (?:up|down)\\n|$)`, "i"));
-  return match?.[1]?.trim();
+  if (!SECTION_NAMES.has(name)) return undefined;
+  const marker = `-- ${name}\n`;
+  const start = sql.indexOf(marker);
+  if (start === -1) return undefined;
+  const bodyStart = start + marker.length;
+  const candidates = ["\n-- up\n", "\n-- down\n"]
+    .map((m) => sql.indexOf(m, bodyStart))
+    .filter((i) => i !== -1);
+  const end = candidates.length > 0 ? Math.min(...candidates) : sql.length;
+  return sql.slice(bodyStart, end).trim();
 }
 
 function validate() {
