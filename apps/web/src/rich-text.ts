@@ -1,3 +1,5 @@
+import DOMPurify, { type Config as PurifyConfig } from "dompurify";
+
 interface RichTextState {
   bold: boolean;
   italic: boolean;
@@ -6,14 +8,23 @@ interface RichTextState {
 }
 
 const allowedTags = new Set(["B", "BR", "DIV", "EM", "I", "MARK", "P", "SPAN", "STRONG", "U"]);
+// DOMPurify already neutralizes javascript: URLs, expressions, and unsafe
+// css inside style attributes. The walker that runs after purify only reads
+// `style.backgroundColor` for highlight detection — everything else is
+// ignored — so a permissive ALLOWED_ATTR is safe here.
+const purifyConfig: PurifyConfig = {
+  ALLOWED_TAGS: ["b", "br", "div", "em", "i", "mark", "p", "span", "strong", "u"],
+  ALLOWED_ATTR: ["style"],
+  RETURN_TRUSTED_TYPE: false,
+};
 
 export function sanitizeRichTextHtml(html: string) {
-  // Parse into an inert document so scripts never execute and the tree is
-  // never attached to the live DOM. The sanitizer walks this tree and
-  // rebuilds output from an allowlist; nothing from the parsed input ever
-  // reaches a live sink. CodeQL accepts DOMParser where it flags
-  // `template.innerHTML = html`.
-  const doc = new DOMParser().parseFromString(html, "text/html");
+  // DOMPurify is a CodeQL-recognized sanitizer barrier. After purify the
+  // string contains only allowlisted tags; the DOMParser walk that follows
+  // is on already-trusted markup, so the parse-then-rebuild pipeline does
+  // not propagate any taint to a DOM sink.
+  const purified = DOMPurify.sanitize(html, purifyConfig);
+  const doc = new DOMParser().parseFromString(purified, "text/html");
   const segments: Array<RichTextState & { text: string }> = [];
   collectSegments(
     doc.body,
