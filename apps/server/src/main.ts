@@ -16,6 +16,11 @@ type DraftState = {
   title: string;
   bodyHtml: string;
   revision: number;
+  // Server-assigned monotonic sequence number. Acts as a deterministic
+  // tie-breaker when two peers produce the same Date.now()-based revision
+  // — without it, equal revisions would let `next > current` silently drop
+  // one peer's write and diverge clients.
+  seq: number;
 };
 
 type ClientMessage = { type?: string; data?: Record<string, unknown> };
@@ -33,9 +38,17 @@ function isComment(value: unknown): value is Comment {
   );
 }
 
-function validateDraftPayload(data: Record<string, unknown>): DraftState | null {
+// Returns a payload WITHOUT a `seq` field — the server assigns seq on accept
+// so peers can't forge ordering.
+function validateDraftPayload(data: Record<string, unknown>): Omit<DraftState, "seq"> | null {
   const { title, bodyHtml, revision } = data;
-  if (typeof title !== "string" || typeof bodyHtml !== "string" || typeof revision !== "number") {
+  if (
+    typeof title !== "string" ||
+    typeof bodyHtml !== "string" ||
+    typeof revision !== "number" ||
+    !Number.isSafeInteger(revision) ||
+    revision < 0
+  ) {
     return null;
   }
   return { title, bodyHtml, revision };
@@ -67,6 +80,19 @@ export type AttachDraftCollabOptions = {
   path?: string;
 };
 
+function isAllowedOrigin(req: http.IncomingMessage): boolean {
+  const origin = req.headers.origin;
+  const host = req.headers.host;
+  // Non-browser clients (Node ws used in tests/CLI) omit Origin. Block only
+  // mismatched origins; missing origin is OK.
+  if (!origin || !host) return true;
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}
+
 export function attachDraftCollab(server: http.Server, options: AttachDraftCollabOptions = {}) {
   const heartbeatIntervalMs = options.heartbeatIntervalMs ?? 30_000;
   const path = options.path ?? "/ws/draft";
@@ -74,6 +100,7 @@ export function attachDraftCollab(server: http.Server, options: AttachDraftColla
   const liveness = new WeakMap<WebSocket, boolean>();
   const peers = new Set<WebSocket>();
   let latest: DraftState | null = null;
+  let seqCounter = 0;
   // ponytail: append-only comment log keyed by id. Comments must NOT live in
   // DraftState — last-write-wins on the draft would let a peer with an empty
   // comments array clobber another peer's additions. Treat each comment as
@@ -99,6 +126,13 @@ export function attachDraftCollab(server: http.Server, options: AttachDraftColla
     // browser. Return silently and let other listeners (or Node's default)
     // handle non-matching upgrades.
     if (req.url !== path) return;
+    if (!isAllowedOrigin(req)) {
+      // Browsers don't apply CORS to WebSocket upgrades, so a malicious page
+      // elsewhere could otherwise mutate the shared room. Reject explicitly.
+      socket.write("HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n");
+      socket.destroy();
+      return;
+    }
     wss.handleUpgrade(req, socket, head, (ws) => {
       peers.add(ws);
       liveness.set(ws, true);
@@ -122,10 +156,16 @@ export function attachDraftCollab(server: http.Server, options: AttachDraftColla
         }
         if (!msg.data) return;
         if (msg.type === "draft") {
-          const next = validateDraftPayload(msg.data);
-          if (!next) return;
-          if (!latest || next.revision > latest.revision) latest = next;
-          broadcast({ type: "draft", data: next }, ws);
+          const validated = validateDraftPayload(msg.data);
+          if (!validated) return;
+          // Stale revisions are dropped — both from `latest` and from the
+          // broadcast — so peers never regress to an older snapshot. Server
+          // seq is monotonic so it's the deterministic tie-breaker on top of
+          // revision.
+          if (latest && validated.revision < latest.revision) return;
+          const enriched: DraftState = { ...validated, seq: ++seqCounter };
+          latest = enriched;
+          broadcast({ type: "draft", data: enriched }, ws);
         } else if (msg.type === "comment") {
           if (!isComment(msg.data)) return;
           if (commentsById.has(msg.data.id)) return; // de-dup

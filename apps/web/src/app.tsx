@@ -144,6 +144,11 @@ type DraftState = {
   title: string;
   bodyHtml: string;
   revision: number;
+  // Optional server-assigned monotonic sequence. Local edits omit it; the
+  // server fills it in when accepting a draft. Receivers compare on
+  // (revision, seq) so equal-Date.now() ties resolve deterministically
+  // instead of silently dropping one peer's write.
+  seq?: number;
 };
 
 function safeRandomId(): string {
@@ -160,7 +165,12 @@ export function normalizeComments(value: unknown): Comment[] {
     const raw = entry as Record<string, unknown>;
     const id = typeof raw.id === "string" && raw.id.length > 0 ? raw.id : safeRandomId();
     const text = typeof raw.text === "string" ? raw.text.trim() : "";
-    const createdAt = typeof raw.createdAt === "number" && Number.isFinite(raw.createdAt) ? raw.createdAt : Date.now();
+    // Number.isFinite alone still admits values that overflow Date's range
+    // (e.g. 1e20), and `new Date(...).toISOString()` then throws RangeError
+    // when the comment list re-renders. Round-trip through Date to drop
+    // anything Date can't represent.
+    const candidate = typeof raw.createdAt === "number" && Number.isFinite(raw.createdAt) ? raw.createdAt : Date.now();
+    const createdAt = Number.isNaN(new Date(candidate).getTime()) ? Date.now() : candidate;
     if (text.length === 0) return [];
     return [{ id, text, createdAt }];
   });
@@ -182,6 +192,18 @@ export function detectLocale(languages: readonly string[] = navigator.languages)
 // ensures monotonicity even when the wall clock stalls or rewinds.
 export function nextRevision(current: number, now: number = Date.now()): number {
   return Math.max(current + 1, now);
+}
+
+// Lexicographic compare on (revision, seq). seq is the server-assigned
+// monotonic tie-breaker for equal-millisecond revisions from two peers.
+// Local-only drafts have no seq yet, defaulting to 0 so the very first
+// server-broadcast (seq >= 1) wins.
+export function compareDraftKey(
+  a: { revision: number; seq?: number },
+  b: { revision: number; seq?: number },
+): number {
+  if (a.revision !== b.revision) return a.revision - b.revision;
+  return (a.seq ?? 0) - (b.seq ?? 0);
 }
 
 function textToHtml(text: string) {
@@ -274,6 +296,12 @@ export function App() {
   const [collaboratorCount, setCollaboratorCount] = useState(1);
   const editorRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<WebSocket | null>(null);
+  // Mirrors of the latest state for use in WS callbacks. The replay-on-open
+  // path needs them but reads them outside any render closure.
+  const draftRef = useRef<DraftState>(fallbackDraft);
+  const commentsRef = useRef<Comment[]>([]);
+  const sentDraftRevisionRef = useRef(0);
+  const sentCommentIdsRef = useRef<Set<string>>(new Set());
 
   const bodyText = useMemo(() => textFromHtml(draft.bodyHtml), [draft.bodyHtml]);
   const wordCount = useMemo(() => {
@@ -284,6 +312,14 @@ export function App() {
     setDraft(loadStoredDraft(fallbackDraft));
     setComments(loadStoredComments());
   }, [fallbackDraft]);
+
+  useEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
+
+  useEffect(() => {
+    commentsRef.current = comments;
+  }, [comments]);
 
   useEffect(() => {
     getBrowserStorage()?.setItem(commentsStorageKey, JSON.stringify(comments));
@@ -313,7 +349,7 @@ export function App() {
         ...data,
         bodyHtml: sanitizeRichTextHtml(data.bodyHtml),
       };
-      setDraft((current) => (next.revision > current.revision ? next : current));
+      setDraft((current) => (compareDraftKey(next, current) > 0 ? next : current));
     }
 
     function applyIncomingComment(incoming: Comment) {
@@ -333,10 +369,29 @@ export function App() {
       });
     }
 
+    function flushPending(ws: WebSocket) {
+      if (ws.readyState !== WebSocket.OPEN) return;
+      // Replay any draft/comment changes that were typed while the socket
+      // was CONNECTING or closed for reconnect. Without this, work made in
+      // those windows is persisted locally but never reaches peers.
+      const currentDraft = draftRef.current;
+      if (currentDraft.revision > sentDraftRevisionRef.current) {
+        ws.send(JSON.stringify({ type: "draft", data: currentDraft }));
+        sentDraftRevisionRef.current = currentDraft.revision;
+      }
+      for (const c of commentsRef.current) {
+        if (!sentCommentIdsRef.current.has(c.id)) {
+          ws.send(JSON.stringify({ type: "comment", data: c }));
+          sentCommentIdsRef.current.add(c.id);
+        }
+      }
+    }
+
     function connect() {
       const ws = new WebSocket(resolveDraftSocketUrl());
       socket = ws;
       socketRef.current = ws;
+      ws.onopen = () => flushPending(ws);
       ws.onmessage = (event) => {
         let message: ServerMessage;
         try {
@@ -389,7 +444,11 @@ export function App() {
     const socket = socketRef.current;
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({ type: "draft", data: next }));
+      sentDraftRevisionRef.current = next.revision;
     }
+    // If socket isn't OPEN yet, flushPending() will pick this up on the next
+    // open/reconnect because we only update sentDraftRevisionRef after a
+    // successful send.
   }
 
   function updateDraft(partial: Omit<Partial<DraftState>, "revision">) {
@@ -410,7 +469,10 @@ export function App() {
     const socket = socketRef.current;
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({ type: "comment", data: newComment }));
+      sentCommentIdsRef.current.add(newComment.id);
     }
+    // If socket isn't OPEN yet, flushPending() will replay this on reconnect
+    // because it's not in sentCommentIdsRef.
     setCommentDraft("");
   }
 

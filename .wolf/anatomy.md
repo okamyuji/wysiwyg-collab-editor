@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-28T05:31:01.843Z
-> Files: 175 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-28T05:55:19.232Z
+> Files: 176 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/
 
@@ -80,7 +80,7 @@
 
 ## apps/server/src/
 
-- `main.ts` — API routes: GET (2 endpoints) (~1667 tok)
+- `main.ts` — API routes: GET (2 endpoints) (~2113 tok)
 
 ## apps/server/src/config/
 
@@ -137,7 +137,7 @@
 
 ## apps/server/tests/
 
-- `draft-collab.test.ts` — Server: startServer, openClient, closeQuiet (~2496 tok)
+- `draft-collab.test.ts` — Server: startServer, openClient, closeQuiet (~3588 tok)
 
 ## apps/web/
 
@@ -146,12 +146,13 @@
 
 ## apps/web/src/
 
-- `app.tsx` — draftStorageKey (~6481 tok)
-- `exporters.ts` — Exports ExportFormat, DraftExportInput, sanitizeRichTextHtml, createExportBlob, exportFilename (~2970 tok)
+- `app.tsx` — draftStorageKey (~7558 tok)
+- `exporters.ts` — Exports ExportFormat, DraftExportInput, sanitizeRichTextHtml, createExportBlob, exportFilename (~3070 tok)
+- `rich-text.ts` — Exports sanitizeRichTextHtml (~867 tok)
 
 ## apps/web/tests/
 
-- `app.test.tsx` — input (~1045 tok)
+- `app.test.tsx` — input (~1298 tok)
 
 ## docs/
 

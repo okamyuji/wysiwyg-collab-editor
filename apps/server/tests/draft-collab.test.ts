@@ -11,12 +11,19 @@ type AnyMessage = {
 };
 
 let server: Server | undefined;
+const clients = new Set<WebSocket>();
 
 afterEach(async () => {
+  // Terminate any test sockets before closing the server. If a test fails
+  // before closeQuiet runs, leaked sockets can keep server.close() pending
+  // forever and hang the whole suite.
+  for (const ws of clients) ws.terminate();
+  clients.clear();
   if (!server) return;
+  const httpServer = server;
+  server = undefined;
   await new Promise<void>((resolve, reject) => {
-    server!.close((error) => (error ? reject(error) : resolve()));
-    server = undefined;
+    httpServer.close((error) => (error ? reject(error) : resolve()));
   });
 });
 
@@ -31,6 +38,8 @@ async function startServer() {
 
 function openClient(url: string) {
   const ws = new WebSocket(url);
+  clients.add(ws);
+  ws.once("close", () => clients.delete(ws));
   const messages: AnyMessage[] = [];
   ws.on("message", (raw) => {
     messages.push(JSON.parse(raw.toString()) as AnyMessage);
@@ -94,15 +103,17 @@ describe("draft collab websocket", () => {
   test("late joiners receive the latest snapshot", async () => {
     const url = await startServer();
     const a = await openClient(url);
+    // Use an observer client to know when the server has stored the latest
+    // draft — a fixed setTimeout flaked under CI load.
+    const observer = await openClient(url);
     a.ws.send(JSON.stringify({ type: "draft", data: { title: "snap", bodyHtml: "<p>s</p>", revision: 42 } }));
-    // Allow the server to receive and store the latest draft.
-    await new Promise((resolve) => setTimeout(resolve, 20));
+    await waitFor(() => observer.messages.find((m) => m.type === "draft"));
 
     const b = await openClient(url);
     const snapshot = await waitFor(() => b.messages.find((m) => m.type === "snapshot"));
     expect(snapshot.data).toMatchObject({ title: "snap", bodyHtml: "<p>s</p>", revision: 42 });
 
-    await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
+    await Promise.all([closeQuiet(a.ws), closeQuiet(observer.ws), closeQuiet(b.ws)]);
   });
 
   test("does not destroy upgrades on unknown paths so coexisting handlers (Vite HMR) keep working", async () => {
@@ -180,6 +191,76 @@ describe("draft collab websocket", () => {
     expect(commentMsgs[0]?.data).toEqual(c1);
 
     await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
+  });
+
+  test("rejects fractional / non-finite / negative revisions", async () => {
+    const url = await startServer();
+    const a = await openClient(url);
+    const b = await openClient(url);
+
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "frac", bodyHtml: "<p/>", revision: 1.5 } }));
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "neg", bodyHtml: "<p/>", revision: -1 } }));
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "huge", bodyHtml: "<p/>", revision: Number.MAX_VALUE } }));
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "ok", bodyHtml: "<p/>", revision: 5 } }));
+
+    const relayed = await waitFor(() => b.messages.find((m) => m.type === "draft"));
+    expect((relayed.data as { title: string }).title).toBe("ok");
+
+    await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
+  });
+
+  test("does not broadcast revisions older than the current latest", async () => {
+    const url = await startServer();
+    const a = await openClient(url);
+    const b = await openClient(url);
+
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "newer", bodyHtml: "<p/>", revision: 10 } }));
+    await waitFor(() => b.messages.find((m) => m.type === "draft"));
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "stale", bodyHtml: "<p/>", revision: 5 } }));
+    // Give the server a moment so a faulty broadcast would land.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    const drafts = b.messages.filter((m) => m.type === "draft");
+    expect(drafts).toHaveLength(1);
+    expect((drafts[0]?.data as { title: string }).title).toBe("newer");
+
+    await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
+  });
+
+  test("assigns increasing seq so equal-revision peers do not silently drop each other", async () => {
+    const url = await startServer();
+    const a = await openClient(url);
+    const b = await openClient(url);
+
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "first", bodyHtml: "<p/>", revision: 7 } }));
+    a.ws.send(JSON.stringify({ type: "draft", data: { title: "second", bodyHtml: "<p/>", revision: 7 } }));
+
+    await waitFor(() => (b.messages.filter((m) => m.type === "draft").length >= 2 ? true : undefined));
+    const seqs = b.messages
+      .filter((m) => m.type === "draft")
+      .map((m) => (m.data as { seq: number }).seq);
+    expect(seqs).toHaveLength(2);
+    expect(seqs[1]).toBeGreaterThan(seqs[0] ?? 0);
+
+    await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
+  });
+
+  test("rejects cross-origin upgrades while accepting non-browser (no Origin) clients", async () => {
+    const url = await startServer();
+    const evil = new WebSocket(url, { origin: "https://evil.example" });
+    clients.add(evil);
+    evil.once("close", () => clients.delete(evil));
+    const evilResult = await new Promise<"error" | "open">((resolve) => {
+      evil.once("error", () => resolve("error"));
+      evil.once("close", () => resolve("error"));
+      evil.once("open", () => resolve("open"));
+    });
+    expect(evilResult).toBe("error");
+
+    // Non-browser client without Origin must still connect (CLI/tests).
+    const cliClient = await openClient(url);
+    expect(cliClient.ws.readyState).toBe(WebSocket.OPEN);
+    await closeQuiet(cliClient.ws);
   });
 
   test("drops malformed comment payloads", async () => {

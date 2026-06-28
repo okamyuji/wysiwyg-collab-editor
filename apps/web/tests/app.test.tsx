@@ -1,6 +1,6 @@
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, test } from "vitest";
-import { App, detectLocale, loadStoredDraft, nextRevision, normalizeComments } from "../src/app.js";
+import { App, compareDraftKey, detectLocale, loadStoredDraft, nextRevision, normalizeComments } from "../src/app.js";
 
 describe("App", () => {
   test("renders the editor shell", () => {
@@ -67,6 +67,25 @@ describe("loadStoredDraft", () => {
   test("falls back when the stored payload is malformed", () => {
     localStorage.setItem("wysiwyg-collab-editor:draft", "not json");
     expect(loadStoredDraft(fallback)).toEqual(fallback);
+  });
+});
+
+describe("normalizeComments createdAt range guard", () => {
+  test("replaces createdAt values Date cannot render", () => {
+    const result = normalizeComments([{ id: "a", text: "ok", createdAt: 1e20 }]);
+    expect(result).toHaveLength(1);
+    expect(() => new Date(result[0]!.createdAt).toISOString()).not.toThrow();
+  });
+});
+
+describe("compareDraftKey", () => {
+  test("orders by revision when they differ", () => {
+    expect(compareDraftKey({ revision: 2 }, { revision: 1 })).toBeGreaterThan(0);
+    expect(compareDraftKey({ revision: 1 }, { revision: 2 })).toBeLessThan(0);
+  });
+  test("falls back to seq when revisions tie — server-assigned tie-breaker", () => {
+    expect(compareDraftKey({ revision: 5, seq: 2 }, { revision: 5, seq: 1 })).toBeGreaterThan(0);
+    expect(compareDraftKey({ revision: 5 }, { revision: 5, seq: 1 })).toBeLessThan(0);
   });
 });
 

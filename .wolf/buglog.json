@@ -945,16 +945,18 @@
     {
       "id": "bug-057",
       "timestamp": "2026-06-28T05:18:58.419Z",
-      "error_message": "Wrong operator: !== should be ===",
+      "error_message": "(misrecorded by auto-detector) the upgrade-path guard required adding an `!==` early-return, not flipping an existing operator.",
       "file": "apps/server/src/main.ts",
-      "root_cause": "Used \"!==\" instead of \"===\"",
-      "fix": "Changed operator !== → ===",
+      "root_cause": "The auto-detector inverted the diff direction. The actual code on main.ts line 106 reads `if (req.url !== path) return;` — that guard was INTRODUCED in bug-049, not the result of flipping an existing `===` to `!==`. See bug-049 for the canonical record.",
+      "fix": "Superseded — refer to bug-049 (silent return for foreign paths so Vite HMR's upgrade is not destroyed). This entry is retained to flag the misrecording for the auto-detector.",
       "tags": [
         "auto-detected",
         "operator-fix",
         "ts"
       ],
-      "related_bugs": [],
+      "related_bugs": [
+        "bug-049"
+      ],
       "occurrences": 1,
       "last_seen": "2026-06-28T05:18:58.419Z"
     },
@@ -1074,6 +1076,262 @@
       ],
       "occurrences": 1,
       "last_seen": "2026-06-28T14:27:00Z"
+    },
+    {
+      "id": "bug-065",
+      "timestamp": "2026-06-28T05:38:53.434Z",
+      "error_message": "Wrong return value",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Was returning: element.textContent ?? \"\";",
+      "fix": "Now returns: doc.body.textContent ?? \"\";",
+      "tags": [
+        "auto-detected",
+        "return-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:38:53.434Z"
+    },
+    {
+      "id": "bug-066",
+      "timestamp": "2026-06-28T05:39:02.987Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "No early return/throw for edge case: !editor",
+      "fix": "Added guard clause: if (!editor)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:39:02.987Z"
+    },
+    {
+      "id": "bug-067",
+      "timestamp": "2026-06-28T05:39:13.595Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/rich-text.ts",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 9→13 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:39:13.595Z"
+    },
+    {
+      "id": "bug-068",
+      "timestamp": "2026-06-28T05:39:20.827Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/exporters.ts",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 9→10 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:39:20.827Z"
+    },
+    {
+      "id": "bug-069",
+      "timestamp": "2026-06-28T05:40:28.080Z",
+      "error_message": "Wrong operator: !== should be ===",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Used \"!==\" instead of \"===\"",
+      "fix": "Changed operator !== → ===",
+      "tags": [
+        "auto-detected",
+        "operator-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:40:28.080Z"
+    },
+    {
+      "id": "bug-070",
+      "timestamp": "2026-06-28T05:46:08.588Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/rich-text.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation | Also: import DOMPurify, { type Config as PurifyConfig } from \"domp",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-28T05:47:46.892Z"
+    },
+    {
+      "id": "bug-071",
+      "timestamp": "2026-06-28T05:46:16.227Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/exporters.ts",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 7→11 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:46:16.227Z"
+    },
+    {
+      "id": "bug-072",
+      "timestamp": "2026-06-28T05:46:33.673Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 7→16 lines (5 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:46:33.673Z"
+    },
+    {
+      "id": "bug-073",
+      "timestamp": "2026-06-28T05:51:36.115Z",
+      "error_message": "Type error",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation | Also: if (!isAllowedOrigin(req)) {; // Browsers don't apply CORS to WebSocket upgrades, so a mal",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-28T05:51:59.265Z"
+    },
+    {
+      "id": "bug-074",
+      "timestamp": "2026-06-28T05:51:43.052Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 7→15 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:51:43.052Z"
+    },
+    {
+      "id": "bug-075",
+      "timestamp": "2026-06-28T05:51:52.800Z",
+      "error_message": "Missing error handling in isAllowedOrigin",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:51:52.800Z"
+    },
+    {
+      "id": "bug-076",
+      "timestamp": "2026-06-28T05:52:07.111Z",
+      "error_message": "Wrong operator: || should be &&",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "Used \"||\" instead of \"&&\"",
+      "fix": "Changed operator || → &&",
+      "tags": [
+        "auto-detected",
+        "operator-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:52:07.111Z"
+    },
+    {
+      "id": "bug-077",
+      "timestamp": "2026-06-28T05:53:09.306Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:53:09.306Z"
+    },
+    {
+      "id": "bug-078",
+      "timestamp": "2026-06-28T05:53:18.402Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "No early return/throw for edge case: ws.readyState !== WebSocket.OPEN",
+      "fix": "Added guard clause: if (ws.readyState !== WebSocket.OPEN)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:53:18.402Z"
+    },
+    {
+      "id": "bug-079",
+      "timestamp": "2026-06-28T05:55:03.530Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/server/tests/draft-collab.test.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:55:03.530Z"
+    },
+    {
+      "id": "bug-080",
+      "timestamp": "2026-06-28T05:55:19.248Z",
+      "error_message": "Type error",
+      "file": "apps/web/tests/app.test.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:55:19.248Z"
     }
   ]
 }

@@ -143,3 +143,41 @@
 | 14:30 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/project_collab_websocket_arch.md | — | ~503 |
 | 14:30 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/feedback_verify_in_browser.md | — | ~205 |
 | 14:31 | Edited ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/MEMORY.md | 1→2 lines | ~72 |
+| 14:35 | Session end: 65 writes across 9 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 9 reads | ~18516 tok |
+| 14:38 | Edited apps/web/src/app.tsx | modified textFromHtml() | ~97 |
+| 14:39 | Edited apps/web/src/app.tsx | added 1 condition(s) | ~149 |
+| 14:39 | Edited apps/web/src/rich-text.ts | modified sanitizeRichTextHtml() | ~180 |
+| 14:39 | Edited apps/web/src/exporters.ts | modified htmlToSegments() | ~115 |
+| 14:40 | Edited apps/web/src/app.tsx | 10→14 lines | ~220 |
+| 14:43 | Session end: 70 writes across 11 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 11 reads | ~21147 tok |
+| 14:43 | Session end: 70 writes across 11 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 11 reads | ~21147 tok |
+| 14:46 | Edited apps/web/src/rich-text.ts | modified sanitizeRichTextHtml() | ~289 |
+| 14:46 | Edited apps/web/src/exporters.ts | modified htmlToSegments() | ~139 |
+| 14:46 | Edited apps/web/src/exporters.ts | added 1 import(s) | ~22 |
+| 14:46 | Edited apps/web/src/app.tsx | CSS: transformation | ~176 |
+| 14:46 | Edited apps/web/src/rich-text.ts | 6→9 lines | ~149 |
+| 14:47 | Edited apps/web/src/rich-text.ts | 4→4 lines | ~44 |
+| 14:47 | Edited apps/web/src/rich-text.ts | inline fix | ~20 |
+| 14:47 | Edited apps/web/src/rich-text.ts | 4→5 lines | ~52 |
+| 14:48 | Edited apps/web/src/exporters.ts | modified htmlToSegments() | ~128 |
+| 14:48 | Edited apps/web/src/app.tsx | 14→12 lines | ~180 |
+| 14:51 | Edited apps/server/src/main.ts | 5→10 lines | ~103 |
+| 14:51 | Edited apps/server/src/main.ts | modified validateDraftPayload() | ~140 |
+| 14:51 | Edited apps/server/src/main.ts | added error handling | ~229 |
+| 14:51 | Edited apps/server/src/main.ts | added 1 condition(s) | ~112 |
+| 14:52 | Edited apps/server/src/main.ts | modified if() | ~190 |
+| 14:52 | Edited apps/web/src/app.tsx | 5→10 lines | ~104 |
+| 14:52 | Edited apps/web/src/app.tsx | modified normalizeComments() | ~279 |
+| 14:52 | Edited apps/web/src/app.tsx | expanded (+6 lines) | ~127 |
+| 14:52 | Edited apps/web/src/app.tsx | expanded (+8 lines) | ~69 |
+| 14:52 | Edited apps/web/src/app.tsx | modified applyIncomingDraft() | ~73 |
+| 14:53 | Edited apps/web/src/app.tsx | added nullish coalescing | ~295 |
+| 14:53 | Edited apps/web/src/app.tsx | added 3 condition(s) | ~288 |
+| 14:53 | Edited apps/web/src/app.tsx | modified publish() | ~144 |
+| 14:53 | Edited apps/web/src/app.tsx | modified if() | ~138 |
+| 14:53 | Edited apps/server/tests/draft-collab.test.ts | modified reject() | ~158 |
+| 14:53 | Edited apps/server/tests/draft-collab.test.ts | modified openClient() | ~128 |
+| 14:54 | Edited apps/server/tests/draft-collab.test.ts | 13→15 lines | ~234 |
+| 14:55 | Edited apps/server/tests/draft-collab.test.ts | added optional chaining | ~954 |
+| 14:55 | Edited apps/web/tests/app.test.tsx | inline fix | ~34 |
+| 14:55 | Edited apps/web/tests/app.test.tsx | expanded (+19 lines) | ~258 |
