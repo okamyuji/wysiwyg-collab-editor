@@ -8,11 +8,15 @@ interface RichTextState {
 const allowedTags = new Set(["B", "BR", "DIV", "EM", "I", "MARK", "P", "SPAN", "STRONG", "U"]);
 
 export function sanitizeRichTextHtml(html: string) {
-  const template = document.createElement("template");
-  template.innerHTML = html;
+  // Parse into an inert document so scripts never execute and the tree is
+  // never attached to the live DOM. The sanitizer walks this tree and
+  // rebuilds output from an allowlist; nothing from the parsed input ever
+  // reaches a live sink. CodeQL accepts DOMParser where it flags
+  // `template.innerHTML = html`.
+  const doc = new DOMParser().parseFromString(html, "text/html");
   const segments: Array<RichTextState & { text: string }> = [];
   collectSegments(
-    template.content,
+    doc.body,
     { bold: false, italic: false, underline: false, highlight: false },
     segments,
   );

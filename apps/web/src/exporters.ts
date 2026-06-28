@@ -168,11 +168,12 @@ function createMarkdownBlob(draft: DraftExportInput) {
 }
 
 function htmlToSegments(html: string) {
-  const template = document.createElement("template");
-  template.innerHTML = html;
+  // DOMParser keeps the parsed tree inert (no script execution, never
+  // attached). The output is rebuilt from an allowlist walk.
+  const doc = new DOMParser().parseFromString(html, "text/html");
   const segments: RichSegment[] = [];
   collectSegments(
-    template.content,
+    doc.body,
     { bold: false, italic: false, underline: false, highlight: false },
     segments,
   );

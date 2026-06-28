@@ -190,9 +190,11 @@ function textToHtml(text: string) {
 }
 
 function textFromHtml(html: string) {
-  const element = document.createElement("div");
-  element.innerHTML = html;
-  return element.textContent ?? "";
+  // DOMParser parses into an inert document — scripts don't execute and the
+  // tree is never attached to the live DOM. CodeQL doesn't flag this the way
+  // it does `element.innerHTML = html`.
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return doc.body.textContent ?? "";
 }
 
 function getBrowserStorage(): Storage | null {
@@ -280,9 +282,17 @@ export function App() {
 
   useEffect(() => {
     const editor = editorRef.current;
-    if (editor && editor.innerHTML !== draft.bodyHtml) {
-      editor.innerHTML = draft.bodyHtml;
-    }
+    if (!editor) return;
+    // Redundant sink-side sanitize. draft.bodyHtml is already sanitized at
+    // every entry point (load, local edit, incoming WS draft); the second
+    // pass is the defensive barrier that CodeQL can locally prove.
+    const safe = sanitizeRichTextHtml(draft.bodyHtml);
+    if (editor.innerHTML === safe) return;
+    // Parse the sanitized HTML in an inert document, then move the parsed
+    // children into the live editor via replaceChildren — no innerHTML
+    // setter on the attached element, no script execution.
+    const parsed = new DOMParser().parseFromString(safe, "text/html");
+    editor.replaceChildren(...Array.from(parsed.body.childNodes));
   }, [draft.bodyHtml]);
 
   useEffect(() => {
