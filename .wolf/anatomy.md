@@ -1,18 +1,26 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-27T17:00:27.370Z
-> Files: 59 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-28T05:31:01.843Z
+> Files: 175 tracked | Anatomy hits: 0 | Misses: 0
+
+## ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/
+
+- `feedback_code_review_reply_per_item.md` (~195 tok)
+- `feedback_verify_in_browser.md` (~211 tok)
+- `MEMORY.md` (~131 tok)
+- `project_collab_websocket_arch.md` — 配線 (~491 tok)
+- `reference_pdf_lib_cjk_subset_bug.md` (~198 tok)
 
 ## ./
 
 - `.DS_Store` (~1640 tok)
-- `CLAUDE.md` — OpenWolf (~57 tok)
 - `.gitignore` — Ignores dependency, build, coverage, Playwright, local env, OS/editor, and scanner output files. (~130 tok)
 - `.nvmrc` — Node.js major version pin for local development and CI parity. (~1 tok)
-- `README.md` — Japanese project overview, setup commands, quality gates, and workspace directory guide. (~330 tok)
-- `package.json` — Root pnpm monorepo manifest, quality gates, E2E, and OWASP security verification scripts. (~260 tok)
+- `CLAUDE.md` — OpenWolf (~57 tok)
+- `package.json` — Node.js package manifest (~381 tok)
 - `pnpm-lock.yaml` — pnpm dependency lockfile generated from the initial workspace manifests. (~3650 tok)
 - `pnpm-workspace.yaml` — pnpm workspace package globs for apps, packages, and e2e. (~12 tok)
+- `README.md` — Japanese project overview, setup commands, quality gates, and workspace directory guide. (~330 tok)
 - `tsconfig.base.json` — Shared strict TypeScript compiler options for all workspaces. (~130 tok)
 
 ## ./apps/export-worker/
@@ -60,6 +68,90 @@
 ## .claude/rules/
 
 - `openwolf.md` (~313 tok)
+
+## .github/workflows/
+
+- `ci.yml` — CI: ci (~617 tok)
+- `dast-zap-full.yml` — CI: dast-zap-full (~212 tok)
+
+## apps/server/
+
+- `package.json` — Node.js package manifest (~230 tok)
+
+## apps/server/src/
+
+- `main.ts` — API routes: GET (2 endpoints) (~1667 tok)
+
+## apps/server/src/config/
+
+- `env.ts` — サーバー起動時の環境変数スキーマ、byte長秘密鍵検証、ENV-001/003変換を定義する。 (~930 tok)
+- `secrets.ts` — AUDIT_HASH_SALT_vN の動的読込と現行salt存在/byte長検証を定義する。 (~320 tok)
+
+## apps/server/src/shared/api/
+
+- `envelope.ts` — REST共通成功/失敗エンベロープ生成と送信ヘルパーを定義する。 (~560 tok)
+
+## apps/server/src/shared/audit-emit/
+
+- `index.ts` — audit_logsハッシュチェーン追記、advisory lock、JCS正規化、secret_versions更新を担う。 (~1150 tok)
+
+## apps/server/src/shared/auth-middleware/
+
+- `index.ts` — セッション/ゲストCookie名、ゲストWSサブプロトコル抽出、認証コンテキスト型を置く。 (~260 tok)
+
+## apps/server/src/shared/csrf-middleware/
+
+- `index.ts` — CSRFヘッダ/Cookie名とCSPレポート例外パス判定を置く。 (~100 tok)
+
+## apps/server/src/shared/db/
+
+- `pool.ts` — pg Pool生成と共通トランザクションヘルパーを定義する。 (~310 tok)
+
+## apps/server/src/shared/error/
+
+- `api-error.ts` — 共通APIエラー型とHTTPステータス/詳細情報を定義する。 (~120 tok)
+
+## apps/server/src/shared/logger/
+
+- `index.ts` — pino logger、ログレベル環境変数、秘密情報redact、child loggerを定義する。 (~280 tok)
+
+## apps/server/src/shared/metrics/
+
+- `index.ts` — prom-clientの既定収集、REST/OT/WS/容量/CSP/ログdropメトリクスを定義する。 (~520 tok)
+
+## apps/server/src/shared/permissions/
+
+- `check.ts` — owner/editor/commenter/viewer順序でユーザー/ゲスト/システムの文書権限を判定する。 (~520 tok)
+
+## apps/server/src/shared/redis/
+
+- `client.ts` — ioredisクライアントを環境変数から生成する。 (~130 tok)
+
+## apps/server/src/shared/s3/
+
+- `client.ts` — S3互換クライアントと画像/エクスポートバケット名を環境変数から生成する。 (~180 tok)
+
+## apps/server/src/shared/tracing/
+
+- `request-id.ts` — x-request-id応答ヘッダとtrace_idを付与するExpress middleware。 (~210 tok)
+
+## apps/server/tests/
+
+- `draft-collab.test.ts` — Server: startServer, openClient, closeQuiet (~2496 tok)
+
+## apps/web/
+
+- `package.json` — Node.js package manifest (~235 tok)
+- `vite.config.ts` — Attach the collab WebSocket directly to Vite's HTTP server so the browser (~592 tok)
+
+## apps/web/src/
+
+- `app.tsx` — draftStorageKey (~6481 tok)
+- `exporters.ts` — Exports ExportFormat, DraftExportInput, sanitizeRichTextHtml, createExportBlob, exportFilename (~2970 tok)
+
+## apps/web/tests/
+
+- `app.test.tsx` — input (~1045 tok)
 
 ## docs/
 
@@ -129,69 +221,55 @@
 - `19-error-code-registry.md` — 19 エラーコード登録簿。章接頭辞ごとのHTTP/運用コードと日英メッセージのソースオブトゥルース。 (~3382 tok)
 - `20-constants-registry.md` — 20 定数登録簿。認証、監査、レート制限、容量、ランタイム/ライブラリの固定値を集約する。 (~2608 tok)
 - `21-environment-variables.md` — 21環境変数契約 (~900 tok)
+- `22-directory-and-module-ownership.md` — 22 ディレクトリとモジュール所有境界。編集対象と禁止領域の対応表を定義する。 (~820 tok)
 - `23-config-file-templates.md` — 23設定ファイルテンプレート (~900 tok)
+- `23-config-file-templates.md` — 23 ルートとアプリ別の package/tsconfig/Vite/Vitest 設定テンプレートを定義する。 (~2650 tok)
 - `24-migrations.md` — 24マイグレーション設計 (~900 tok)
 - `26-ci-yaml.md` — 26 CI YAML設計 (~900 tok)
+- `27-shared-modules.md` — 27 shared パッケージと各アプリからの利用契約、import 境界を定義する。 (~1040 tok)
 - `28-test-strategy.md` — 28テスト戦略 (~900 tok)
 - `29-kubernetes-manifests.md` — 29 Kubernetesマニフェスト設計 (~900 tok)
 - `30-local-development.md` — 30ローカル開発設計 (~900 tok)
-- `22-directory-and-module-ownership.md` — 22 ディレクトリとモジュール所有境界。編集対象と禁止領域の対応表を定義する。 (~820 tok)
-- `23-config-file-templates.md` — 23 ルートとアプリ別の package/tsconfig/Vite/Vitest 設定テンプレートを定義する。 (~2650 tok)
-- `27-shared-modules.md` — 27 shared パッケージと各アプリからの利用契約、import 境界を定義する。 (~1040 tok)
 - `30-local-development.md` — 30 ローカル開発手順、起動コマンド、ポート、ヘルスチェックを定義する。 (~890 tok)
 
-## apps/server/src/config/
+## docs/requirements/
 
-- `env.ts` — サーバー起動時の環境変数スキーマ、byte長秘密鍵検証、ENV-001/003変換を定義する。 (~930 tok)
-- `secrets.ts` — AUDIT_HASH_SALT_vN の動的読込と現行salt存在/byte長検証を定義する。 (~320 tok)
+- `01-requirements-analysis.md` — 要求分析書 (~2740 tok)
+- `02-requirements-specification.md` — 要件定義書 (~9484 tok)
 
-## apps/server/src/shared/api/
+## operations-infra/
 
-- `envelope.ts` — REST共通成功/失敗エンベロープ生成と送信ヘルパーを定義する。 (~560 tok)
+- `.env.example` — Environment variable template matching detailed design 21. (~420 tok)
+- `.github/workflows/ci.yml` — Minimal CI workflow for secret scan, migration dry run, traceability, doclint, and Trivy. (~650 tok)
+- `.github/workflows/dast-zap-full.yml` — Scheduled/manual ZAP full scan workflow. (~240 tok)
+- `.gitleaks.toml` — Secret scanning rules and allowlists for CI. (~230 tok)
+- `.semgrep.yml` — Semgrep ruleset selection and SAST exclusions. (~150 tok)
+- `.semgrep.yml` — Semgrep path/severity exclusions; registry rules are passed from the root `security:owasp` script. (~80 tok)
+- `apps/export-worker/src/main.test.ts` — Export-worker poll interval parser tests. (~90 tok)
+- `apps/export-worker/vitest.config.ts` — Export-worker Vitest config excluding dist. (~80 tok)
+- `apps/server/tests/main.test.ts` — Server Vitest health-check smoke test using createApp. (~220 tok)
+- `apps/web/tests/app.test.tsx` — Web Vitest smoke test for the editor shell. (~80 tok)
+- `docker-compose.yml` — Local PostgreSQL, Redis, MinIO, and MailCatcher services. (~640 tok)
+- `docker/app-server.Dockerfile` — App server production image build contract. (~230 tok)
+- `docker/export-worker.Dockerfile` — Export worker image with Playwright runtime dependencies. (~300 tok)
+- `e2e/fixtures/users.ts` — E2E seed user constants matching local seed contract. (~180 tok)
+- `e2e/package.json` — E2E package manifest and warning-free Playwright test script. (~90 tok)
+- `e2e/playwright.config.ts` — Playwright projects/reporters/baseURL config with exactOptionalPropertyTypes-safe workers setting. (~260 tok)
+- `e2e/tests/editor-ux.spec.ts` — Cross-browser E2E coverage for edit/save, panels, en/ja locale, viewport overflow, two-user draft sync, rich-text decoration, executable-markup sanitization, and PDF/DOCX/Markdown export file validation. (~1500 tok)
+- `e2e/tsconfig.json` — Strict TypeScript config for Playwright specs and config. (~80 tok)
+- `manifests/**` — Kustomize base/overlays and Prometheus alert manifests for app-server/export-worker. (~3200 tok)
+- `trivy.yaml` — Trivy filesystem/container scan policy. (~90 tok)
+- `vite.config.ts` — Root Vite+ config for Oxfmt formatting and ignore patterns. (~150 tok)
+- `zap-baseline.conf` — OWASP ZAP baseline rule dispositions. (~60 tok)
 
-## apps/server/src/shared/audit-emit/
+## packages/doc-canonical/
 
-- `index.ts` — audit_logsハッシュチェーン追記、advisory lock、JCS正規化、secret_versions更新を担う。 (~1150 tok)
+- `package.json` — doc-canonical package manifest and export declaration. (~100 tok)
+- `tsconfig.json` — standalone strict TypeScript config for canonical wrapper compilation. (~120 tok)
 
-## apps/server/src/shared/auth-middleware/
+## packages/doc-canonical/src/
 
-- `index.ts` — セッション/ゲストCookie名、ゲストWSサブプロトコル抽出、認証コンテキスト型を置く。 (~260 tok)
-
-## apps/server/src/shared/csrf-middleware/
-
-- `index.ts` — CSRFヘッダ/Cookie名とCSPレポート例外パス判定を置く。 (~100 tok)
-
-## apps/server/src/shared/db/
-
-- `pool.ts` — pg Pool生成と共通トランザクションヘルパーを定義する。 (~310 tok)
-
-## apps/server/src/shared/error/
-
-- `api-error.ts` — 共通APIエラー型とHTTPステータス/詳細情報を定義する。 (~120 tok)
-
-## apps/server/src/shared/logger/
-
-- `index.ts` — pino logger、ログレベル環境変数、秘密情報redact、child loggerを定義する。 (~280 tok)
-
-## apps/server/src/shared/metrics/
-
-- `index.ts` — prom-clientの既定収集、REST/OT/WS/容量/CSP/ログdropメトリクスを定義する。 (~520 tok)
-
-## apps/server/src/shared/permissions/
-
-- `check.ts` — owner/editor/commenter/viewer順序でユーザー/ゲスト/システムの文書権限を判定する。 (~520 tok)
-
-## apps/server/src/shared/redis/
-
-- `client.ts` — ioredisクライアントを環境変数から生成する。 (~130 tok)
-
-## apps/server/src/shared/s3/
-
-- `client.ts` — S3互換クライアントと画像/エクスポートバケット名を環境変数から生成する。 (~180 tok)
-
-## apps/server/src/shared/tracing/
-
-- `request-id.ts` — x-request-id応答ヘッダとtrace_idを付与するExpress middleware。 (~210 tok)
+- `index.ts` — audit record canonical shape, required key order, NFC/JCS-style canonical JSON wrapper, and ZERO_256 genesis hash constant. (~470 tok)
 
 ## packages/shared/
 
@@ -234,51 +312,12 @@
 
 - `index.ts` — fixed 16-color palette, WCAG contrast helpers, allowed-combination generation, and CSP style string helper. (~520 tok)
 
-## packages/doc-canonical/
-
-- `package.json` — doc-canonical package manifest and export declaration. (~100 tok)
-- `tsconfig.json` — standalone strict TypeScript config for canonical wrapper compilation. (~120 tok)
-
-## packages/doc-canonical/src/
-
-- `index.ts` — audit record canonical shape, required key order, NFC/JCS-style canonical JSON wrapper, and ZERO_256 genesis hash constant. (~470 tok)
-
-## docs/requirements/
-
-- `01-requirements-analysis.md` — 要求分析書 (~2740 tok)
-- `02-requirements-specification.md` — 要件定義書 (~9484 tok)
-
 ## tools/
 
 - `auto_fix_docs.py` — Auto-fix documents to comply with STYLE_GUIDE.md (banned vocab + term unification + boundary spaces). (~1196 tok)
 - `consensus_review.md` — Consensus Review プロトコル バージョン1.0 (~369 tok)
+- `dev.mjs` — Parallel dev runner with graceful SIGINT/SIGTERM forwarding. (~901 tok)
 - `lint_docs.py` — Document lint based on STYLE_GUIDE.md and QUALITY_RUBRIC.md (version 1.0). (~3505 tok)
-- `migrate.mjs` — SQL migration order/section validator and optional psql-backed up/down executor. (~390 tok)
+- `migrate.mjs` — mode: fail, section, validate, psql (~773 tok)
 - `seed-local.mjs` — Local psql seed script for users, roles, audit salt, and welcome document. (~420 tok)
 - `traceability_check.mjs` — Docs reference and error-code registry consistency checker. (~260 tok)
-
-## operations-infra/
-
-- `.env.example` — Environment variable template matching detailed design 21. (~420 tok)
-- `.gitleaks.toml` — Secret scanning rules and allowlists for CI. (~230 tok)
-- `.semgrep.yml` — Semgrep ruleset selection and SAST exclusions. (~150 tok)
-- `docker-compose.yml` — Local PostgreSQL, Redis, MinIO, and MailCatcher services. (~640 tok)
-- `.semgrep.yml` — Semgrep path/severity exclusions; registry rules are passed from the root `security:owasp` script. (~80 tok)
-- `trivy.yaml` — Trivy filesystem/container scan policy. (~90 tok)
-- `zap-baseline.conf` — OWASP ZAP baseline rule dispositions. (~60 tok)
-- `.github/workflows/ci.yml` — Minimal CI workflow for secret scan, migration dry run, traceability, doclint, and Trivy. (~650 tok)
-- `.github/workflows/dast-zap-full.yml` — Scheduled/manual ZAP full scan workflow. (~240 tok)
-- `docker/app-server.Dockerfile` — App server production image build contract. (~230 tok)
-- `docker/export-worker.Dockerfile` — Export worker image with Playwright runtime dependencies. (~300 tok)
-- `e2e/package.json` — E2E package manifest and warning-free Playwright test script. (~90 tok)
-- `e2e/tsconfig.json` — Strict TypeScript config for Playwright specs and config. (~80 tok)
-- `e2e/playwright.config.ts` — Playwright projects/reporters/baseURL config with exactOptionalPropertyTypes-safe workers setting. (~260 tok)
-- `e2e/fixtures/users.ts` — E2E seed user constants matching local seed contract. (~180 tok)
-- `e2e/tests/editor-ux.spec.ts` — Cross-browser E2E coverage for edit/save, panels, en/ja locale, viewport overflow, two-user draft sync, rich-text decoration, executable-markup sanitization, and PDF/DOCX/Markdown export file validation. (~1500 tok)
-- `vite.config.ts` — Root Vite+ config for Oxfmt formatting and ignore patterns. (~150 tok)
-- `apps/web/tests/app.test.tsx` — Web Vitest smoke test for the editor shell. (~80 tok)
-- `apps/server/tests/main.test.ts` — Server Vitest health-check smoke test using createApp. (~220 tok)
-- `apps/export-worker/vitest.config.ts` — Export-worker Vitest config excluding dist. (~80 tok)
-- `apps/export-worker/src/main.test.ts` — Export-worker poll interval parser tests. (~90 tok)
-- `manifests/**` — Kustomize base/overlays and Prometheus alert manifests for app-server/export-worker. (~3200 tok)
-- `migrations/1700000010_users.sql` through `migrations/1700000210_seed_initial_secrets.sql` — Ordered PostgreSQL migration set from detailed design 24, including required audit logs migration. (~2600 tok)

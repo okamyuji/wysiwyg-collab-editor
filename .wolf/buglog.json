@@ -8,7 +8,11 @@
       "file": "/Users/yujiokamoto/devs/typescript/wysiwyg-collab-editor",
       "root_cause": "The requested project directory is not initialized as a git worktree, so git status cannot be used for concurrency inspection.",
       "fix": "Verified the filesystem layout directly and avoided git-dependent workflow assumptions for this scaffold pass.",
-      "tags": ["git", "workspace", "verification"],
+      "tags": [
+        "git",
+        "workspace",
+        "verification"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:02:53+09:00"
@@ -20,7 +24,11 @@
       "file": "pnpm-workspace.yaml",
       "root_cause": "pnpm 11 blocks dependency build scripts unless explicitly approved, and pnpm 11 now reads pnpm-specific settings from pnpm-workspace.yaml instead of package.json.",
       "fix": "Kept a single allowBuilds.esbuild=true mapping in pnpm-workspace.yaml and removed pnpm's generated placeholder duplicate.",
-      "tags": ["pnpm", "esbuild", "install"],
+      "tags": [
+        "pnpm",
+        "esbuild",
+        "install"
+      ],
       "related_bugs": [],
       "occurrences": 3,
       "last_seen": "2026-06-28T11:06:00+09:00"
@@ -32,7 +40,11 @@
       "file": "/Users/yujiokamoto/devs/typescript/wysiwyg-collab-editor",
       "root_cause": "The RTK wrapper blocks compound find predicates, and the discovery command attempted a multi-name search through find.",
       "fix": "Switched discovery to `rtk rg --files -g ...` and simple RTK-safe commands.",
-      "tags": ["rtk", "find", "workflow"],
+      "tags": [
+        "rtk",
+        "find",
+        "workflow"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:03:20+09:00"
@@ -44,7 +56,11 @@
       "file": "apps/server/tsconfig.json",
       "root_cause": "The app tsconfig used rootDir=src while including package-level config files outside src.",
       "fix": "Limited app tsconfig include patterns to src/**/* so runtime builds only compile source entrypoints.",
-      "tags": ["typescript", "tsconfig", "build"],
+      "tags": [
+        "typescript",
+        "tsconfig",
+        "build"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:07:00+09:00"
@@ -56,7 +72,11 @@
       "file": "packages/doc-canonical/src/index.ts",
       "root_cause": "The canonicalizer handled null, number, boolean, and string in one branch while calling string-only normalize through optional chaining.",
       "fix": "Split primitive handling so only strings are normalized and null/number/boolean are stringified directly.",
-      "tags": ["typescript", "strict-null", "doc-canonical"],
+      "tags": [
+        "typescript",
+        "strict-null",
+        "doc-canonical"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T02:07:09Z"
@@ -68,7 +88,11 @@
       "file": "apps/server/package.json",
       "root_cause": "Server shared/config modules were added without their runtime and type dependencies declared in the server package manifest.",
       "fix": "Added the imported server shared-module dependencies and @types/pg to apps/server/package.json.",
-      "tags": ["dependencies", "server", "typescript"],
+      "tags": [
+        "dependencies",
+        "server",
+        "typescript"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:08:00+09:00"
@@ -80,8 +104,14 @@
       "file": "/Users/yujiokamoto/devs/typescript/wysiwyg-collab-editor",
       "root_cause": "The RTK wrapper does not pass the shell builtin `test` form through as intended in this environment.",
       "fix": "Use `rtk proxy sh -c 'test -f ...'` or RTK-safe file listing commands for existence checks.",
-      "tags": ["rtk", "test", "workflow"],
-      "related_bugs": ["bug-003"],
+      "tags": [
+        "rtk",
+        "test",
+        "workflow"
+      ],
+      "related_bugs": [
+        "bug-003"
+      ],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:07:34+09:00"
     },
@@ -92,8 +122,14 @@
       "file": "apps/server/src/config/env.ts",
       "root_cause": "The env secret validator used an ad-hoc ctx annotation while zod's real RefinementCtx type was available after dependencies resolved.",
       "fix": "Imported RefinementCtx from zod and restored z.ZodIssueCode.custom for the superRefine issue.",
-      "tags": ["typescript", "zod", "env"],
-      "related_bugs": ["bug-006"],
+      "tags": [
+        "typescript",
+        "zod",
+        "env"
+      ],
+      "related_bugs": [
+        "bug-006"
+      ],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:09:00+09:00"
     },
@@ -104,7 +140,12 @@
       "file": "package.json",
       "root_cause": "The root lint script did not constrain Oxlint's path set, so Vite+ lint traversed generated and dependency directories.",
       "fix": "Changed lint to target apps/packages/e2e/tools/vite.config.ts and explicitly ignore dist and node_modules.",
-      "tags": ["vite-plus", "oxlint", "lint", "node_modules"],
+      "tags": [
+        "vite-plus",
+        "oxlint",
+        "lint",
+        "node_modules"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:20:00+09:00"
@@ -116,7 +157,11 @@
       "file": "e2e/playwright.config.ts",
       "root_cause": "With exactOptionalPropertyTypes, assigning workers: undefined is not valid for PlaywrightTestConfig.",
       "fix": "Changed the CI workers setting to a conditional object spread so the property is omitted outside CI.",
-      "tags": ["playwright", "typescript", "exactOptionalPropertyTypes"],
+      "tags": [
+        "playwright",
+        "typescript",
+        "exactOptionalPropertyTypes"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:20:00+09:00"
@@ -128,7 +173,12 @@
       "file": "e2e/package.json",
       "root_cause": "Playwright browsers had not been installed after updating @playwright/test, and the inherited terminal color environment produced Node warnings.",
       "fix": "Installed chromium/firefox/webkit with Playwright and changed the E2E script to unset FORCE_COLOR and NO_COLOR before running tests.",
-      "tags": ["playwright", "e2e", "browser-install", "warnings"],
+      "tags": [
+        "playwright",
+        "e2e",
+        "browser-install",
+        "warnings"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:26:00+09:00"
@@ -140,7 +190,11 @@
       "file": "apps/web/src/app.tsx",
       "root_cause": "Localized message literals narrowed useState too aggressively, and locale detection checked for any Japanese language instead of respecting browser preference order.",
       "fix": "Widened editable state values to string and changed locale detection to use the first supported language in navigator.languages order.",
-      "tags": ["i18n", "typescript", "locale"],
+      "tags": [
+        "i18n",
+        "typescript",
+        "locale"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:33:00+09:00"
@@ -152,7 +206,11 @@
       "file": "apps/web/src/app.tsx",
       "root_cause": "The editor article used aria-labelledby pointing at the document title field label, causing duplicate accessible names.",
       "fix": "Removed the article aria-labelledby so the field label uniquely names the input.",
-      "tags": ["a11y", "playwright", "i18n"],
+      "tags": [
+        "a11y",
+        "playwright",
+        "i18n"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:34:00+09:00"
@@ -164,7 +222,11 @@
       "file": "e2e/tests/editor-ux.spec.ts",
       "root_cause": "The first E2E suite focused on shell editing, panels, localization, and viewport checks but did not model two active collaborators.",
       "fix": "Added BroadcastChannel/localStorage draft sync in the web scaffold and a two-page E2E case that verifies title and body edits propagate between active collaborators.",
-      "tags": ["e2e", "collaboration", "playwright"],
+      "tags": [
+        "e2e",
+        "collaboration",
+        "playwright"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:45:00+09:00"
@@ -176,7 +238,11 @@
       "file": "e2e/tests/editor-ux.spec.ts",
       "root_cause": "The editor scaffold used a plain text input flow, so rich-text commands such as bold, italic, underline, and highlight had no user-facing control or test coverage.",
       "fix": "Changed the document body to a contenteditable editor, added formatting toolbar controls, and verified bold/italic/underline/highlight output in Playwright.",
-      "tags": ["e2e", "rich-text", "formatting"],
+      "tags": [
+        "e2e",
+        "rich-text",
+        "formatting"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:45:00+09:00"
@@ -188,7 +254,12 @@
       "file": "apps/web/src/app.tsx",
       "root_cause": "The React component read browser storage during useState initialization while being rendered through react-dom/server in the unit test.",
       "fix": "Initialized from localized fallback state and moved persisted draft loading into a browser-only effect with guarded storage access.",
-      "tags": ["vitest", "react", "localStorage", "warnings"],
+      "tags": [
+        "vitest",
+        "react",
+        "localStorage",
+        "warnings"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:47:00+09:00"
@@ -200,8 +271,14 @@
       "file": "e2e/tests/editor-ux.spec.ts",
       "root_cause": "The new aria-label 'Formatting toolbar' overlapped the export label 'Format' for Playwright label lookup.",
       "fix": "Scoped the export format selector to the side panel before selecting and asserting the value.",
-      "tags": ["playwright", "a11y", "locator"],
-      "related_bugs": ["bug-015"],
+      "tags": [
+        "playwright",
+        "a11y",
+        "locator"
+      ],
+      "related_bugs": [
+        "bug-015"
+      ],
       "occurrences": 1,
       "last_seen": "2026-06-28T11:48:00+09:00"
     },
@@ -212,7 +289,12 @@
       "file": "apps/web/src/exporters.ts",
       "root_cause": "The first PDF implementation embedded a WOFF/CFF Noto Sans CJK font that fontkit could load but could not subset reliably.",
       "fix": "Switched PDF embedding to a TTF Noto Sans JP asset from @expo-google-fonts/noto-sans-jp and kept export generation lazy-loaded.",
-      "tags": ["pdf", "fontkit", "export", "cjk"],
+      "tags": [
+        "pdf",
+        "fontkit",
+        "export",
+        "cjk"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T12:02:00+09:00"
@@ -224,7 +306,11 @@
       "file": ".semgrep.yml",
       "root_cause": "Registry rulesets such as p/owasp-top-ten were incorrectly listed as strings under the local YAML rules key.",
       "fix": "Kept local YAML for path exclusions only and moved registry rulesets into the root security:owasp CLI command.",
-      "tags": ["semgrep", "owasp", "security"],
+      "tags": [
+        "semgrep",
+        "owasp",
+        "security"
+      ],
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-28T12:07:00+09:00"
@@ -236,8 +322,14 @@
       "file": "e2e/tests/editor-ux.spec.ts",
       "root_cause": "Parallel E2E tests shared the same fixed test-results/exports/decorated-export.md path.",
       "fix": "Changed export download validation to write under testInfo.outputPath('exports') for each test case.",
-      "tags": ["playwright", "parallel-tests", "export"],
-      "related_bugs": ["bug-015"],
+      "tags": [
+        "playwright",
+        "parallel-tests",
+        "export"
+      ],
+      "related_bugs": [
+        "bug-015"
+      ],
       "occurrences": 1,
       "last_seen": "2026-06-28T12:12:00+09:00"
     },
@@ -248,10 +340,740 @@
       "file": "apps/web/src/app.tsx",
       "root_cause": "The web app statically imported export libraries, so pdf-lib/docx/font assets were included in the initial application chunk.",
       "fix": "Moved exporter loading behind dynamic import, split lightweight rich-text sanitization into its own module, and set a deliberate export chunk warning limit.",
-      "tags": ["vite", "build-warning", "export", "code-splitting"],
-      "related_bugs": ["bug-018"],
+      "tags": [
+        "vite",
+        "build-warning",
+        "export",
+        "code-splitting"
+      ],
+      "related_bugs": [
+        "bug-018"
+      ],
       "occurrences": 1,
       "last_seen": "2026-06-28T12:15:00+09:00"
+    },
+    {
+      "id": "bug-022",
+      "timestamp": "2026-06-28T03:52:38.341Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/exporters.ts",
+      "root_cause": "No early return/throw for edge case: !text",
+      "fix": "Added guard clause: if (!text)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T03:52:38.342Z"
+    },
+    {
+      "id": "bug-023",
+      "timestamp": "2026-06-28T03:52:51.258Z",
+      "error_message": "Incorrect value in code",
+      "file": "package.json",
+      "root_cause": "Had \"pnpm --filter ./apps/web dev & pnpm --filter ./ap",
+      "fix": "Changed to \"pnpm --filter='",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T03:52:51.258Z"
+    },
+    {
+      "id": "bug-024",
+      "timestamp": "2026-06-28T03:53:08.751Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T03:53:08.751Z"
+    },
+    {
+      "id": "bug-025",
+      "timestamp": "2026-06-28T03:53:19.766Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Had \"共同編集中 2 名\"",
+      "fix": "Changed to `共同編集中 ${count} 名`",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T03:53:19.766Z"
+    },
+    {
+      "id": "bug-026",
+      "timestamp": "2026-06-28T03:53:46.653Z",
+      "error_message": "CSS fix: event",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "event: StorageEvent) { → MessageEvent<PresenceMessage>) => {",
+      "fix": "Changed event: StorageEvent) { → MessageEvent<PresenceMessage>) => {",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T03:53:46.653Z"
+    },
+    {
+      "id": "bug-027",
+      "timestamp": "2026-06-28T03:57:55.193Z",
+      "error_message": "Incorrect value in code",
+      "file": "package.json",
+      "root_cause": "Had \"pnpm --filter='",
+      "fix": "Changed to \"node tools/dev.mjs\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T03:57:55.193Z"
+    },
+    {
+      "id": "bug-028",
+      "timestamp": "2026-06-28T04:26:09.720Z",
+      "error_message": "Function not marked async",
+      "file": "tools/dev.mjs",
+      "root_cause": "Function uses await but wasn't declared async",
+      "fix": "Added async modifier",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "mjs"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:26:09.720Z"
+    },
+    {
+      "id": "bug-029",
+      "timestamp": "2026-06-28T04:30:46.670Z",
+      "error_message": "Missing guard clause",
+      "file": "tools/migrate.mjs",
+      "root_cause": "No early return/throw for edge case: !SECTION_NAMES.has(name",
+      "fix": "Added guard clause: if (!SECTION_NAMES.has(name)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "mjs"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:30:46.670Z"
+    },
+    {
+      "id": "bug-030",
+      "timestamp": "2026-06-28T04:43:26.863Z",
+      "error_message": "CSS fix: wysiwyg-collab-editor",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "wysiwyg-collab-editor: presence\" → draft\"",
+      "fix": "Changed wysiwyg-collab-editor: presence\" → draft\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:43:26.863Z"
+    },
+    {
+      "id": "bug-031",
+      "timestamp": "2026-06-28T04:43:31.660Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "No early return/throw for edge case: typeof window === \"undefined\"",
+      "fix": "Added guard clause: if (typeof window === \"undefined\")",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:43:31.660Z"
+    },
+    {
+      "id": "bug-032",
+      "timestamp": "2026-06-28T04:44:01.118Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:44:01.118Z"
+    },
+    {
+      "id": "bug-033",
+      "timestamp": "2026-06-28T04:49:31.396Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "No early return/throw for edge case: typeof override === \"string\" && override.length > 0",
+      "fix": "Added guard clause: if (typeof override === \"string\" && override)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:49:31.396Z"
+    },
+    {
+      "id": "bug-034",
+      "timestamp": "2026-06-28T04:49:35.948Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 4→3 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:49:35.948Z"
+    },
+    {
+      "id": "bug-035",
+      "timestamp": "2026-06-28T04:49:59.636Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:49:59.636Z"
+    },
+    {
+      "id": "bug-036",
+      "timestamp": "2026-06-28T04:53:44.567Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:53:44.567Z"
+    },
+    {
+      "id": "bug-037",
+      "timestamp": "2026-06-28T04:53:49.818Z",
+      "error_message": "CSS fix: revision",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "revision: current.revision + 1 → nextRevision(current.revision)",
+      "fix": "Changed revision: current.revision + 1 → nextRevision(current.revision)",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:53:49.818Z"
+    },
+    {
+      "id": "bug-038",
+      "timestamp": "2026-06-28T04:54:02.096Z",
+      "error_message": "Type error",
+      "file": "apps/web/tests/app.test.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:54:02.096Z"
+    },
+    {
+      "id": "bug-039",
+      "timestamp": "2026-06-28T13:55:00Z",
+      "error_message": "Vite dev server flooded with `ws proxy error: ECONNRESET/EPIPE` once browsers held WS open through the /ws/draft proxy.",
+      "file": "apps/web/vite.config.ts, apps/web/src/app.tsx",
+      "root_cause": "Vite's HTTP proxy keeps trying to forward to dead upstream sockets when a WebSocket session lingers across client/server lifecycle events. The proxy added a fragile hop between browser and ws server with no benefit since both run locally.",
+      "fix": "Removed the /ws/draft proxy. Client now connects directly to ws://localhost:3000 in dev (overridable via VITE_COLLAB_WS_URL) and same-origin in production.",
+      "tags": [
+        "websocket",
+        "vite",
+        "dev-server",
+        "ECONNRESET",
+        "EPIPE",
+        "proxy"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T13:55:00Z"
+    },
+    {
+      "id": "bug-040",
+      "timestamp": "2026-06-28T13:55:00Z",
+      "error_message": "Cross-browser collab: edits from one browser were not reflected in the other (asymmetric — Brave→Chrome worked, Chrome→Brave did not).",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Per-client revision counter started from each browser's localStorage and incremented locally (`current.revision + 1`). When Brave's stored revision was higher than Chrome's, Chrome's incoming drafts had smaller revisions and were filtered out by `next.revision > current.revision`.",
+      "fix": "Introduced `nextRevision(current, now)` = max(current + 1, Date.now()). Anchoring on the wall clock keeps revisions globally monotonic enough for last-write-wins, so a fresh peer never silently shadows the other's edits. Exported and unit-tested.",
+      "tags": [
+        "collab",
+        "revision",
+        "lamport",
+        "websocket",
+        "race-condition",
+        "localStorage"
+      ],
+      "related_bugs": [
+        "bug-039"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T13:55:00Z"
+    },
+    {
+      "id": "bug-041",
+      "timestamp": "2026-06-28T13:55:00Z",
+      "error_message": "No automated regression coverage for the cross-browser WS path; previous 'smoke test' (one-off node script) gave false confidence.",
+      "file": "apps/server/tests/draft-collab.test.ts",
+      "root_cause": "The WS broadcast was only verified by an interactive node REPL script run once. CI never reran it; the test was not portable across sessions.",
+      "fix": "Added 5 vitest integration tests in apps/server/tests/draft-collab.test.ts covering relay (no echo), presence count up/down, snapshot for late joiners, unknown-path rejection, and malformed-message tolerance. Runs in `pnpm -r test`.",
+      "tags": [
+        "testing",
+        "websocket",
+        "regression",
+        "integration-test"
+      ],
+      "related_bugs": [
+        "bug-039",
+        "bug-040"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T13:55:00Z"
+    },
+    {
+      "id": "bug-042",
+      "timestamp": "2026-06-28T04:59:18.820Z",
+      "error_message": "CSS fix: https",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "https: \" → \" ? \"wss:\" : \"ws:\"",
+      "fix": "Changed https: \" → \" ? \"wss:\" : \"ws:\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T04:59:18.820Z"
+    },
+    {
+      "id": "bug-043",
+      "timestamp": "2026-06-28T05:01:00.972Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "No early return/throw for edge case: req.url !== path",
+      "fix": "Added guard clause: if (req.url !== path)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:01:00.972Z"
+    },
+    {
+      "id": "bug-044",
+      "timestamp": "2026-06-28T05:01:11.905Z",
+      "error_message": "Type error",
+      "file": "apps/server/tests/draft-collab.test.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:01:11.905Z"
+    },
+    {
+      "id": "bug-045",
+      "timestamp": "2026-06-28T05:04:31.724Z",
+      "error_message": "CSS fix: revision",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "revision: typeof parsed.revision === \"number\" ? parsed.revision : fallback.revision, → fallback.revision,",
+      "fix": "Changed revision: typeof parsed.revision === \"number\" ? parsed.revision : fallback.revision, → fallback.revision,",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:04:31.724Z"
+    },
+    {
+      "id": "bug-046",
+      "timestamp": "2026-06-28T05:04:54.620Z",
+      "error_message": "Type error",
+      "file": "apps/web/tests/app.test.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:04:54.620Z"
+    },
+    {
+      "id": "bug-047",
+      "timestamp": "2026-06-28T05:11:04.700Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "10 lines replaced/restructured",
+      "fix": "Rewrote 36→46 lines (10 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:11:04.700Z"
+    },
+    {
+      "id": "bug-048",
+      "timestamp": "2026-06-28T14:13:00Z",
+      "error_message": "Cross-origin WS to localhost:3000 was being blocked/throttled in the browser; ECONNRESET/EPIPE flood on Vite proxy.",
+      "file": "apps/web/vite.config.ts, apps/server/src/main.ts, apps/server/package.json",
+      "root_cause": "Two separate failure modes for cross-origin WS in dev: Vite's HTTP proxy churned EPIPE on long-lived sockets, and Brave/Chromium shields can drop cross-origin localhost ws upgrades.",
+      "fix": "Workspace-export attachDraftCollab from @wysiwyg-collab-editor/server via package `exports`. Vite plugin in apps/web/vite.config.ts calls attachDraftCollab on Vite's own httpServer so the browser only ever sees same-origin ws://localhost:5173/ws/draft. Also added navigateFallbackDenylist for /ws/ in VitePWA.",
+      "tags": [
+        "websocket",
+        "same-origin",
+        "vite-plugin",
+        "brave-shields",
+        "monorepo-exports"
+      ],
+      "related_bugs": [
+        "bug-039"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T14:13:00Z"
+    },
+    {
+      "id": "bug-049",
+      "timestamp": "2026-06-28T14:13:00Z",
+      "error_message": "Both browsers stuck in infinite reload loop after enabling same-origin WS.",
+      "file": "apps/server/src/main.ts, apps/server/tests/draft-collab.test.ts",
+      "root_cause": "attachDraftCollab's `upgrade` listener called `socket.destroy()` for any path != /ws/draft. This destroyed Vite's HMR upgrade socket on the SAME http server, killing HMR and forcing the browser into a full reload loop.",
+      "fix": "Replace `socket.destroy()` with a silent `return` for non-matching paths so coexisting listeners (Vite HMR) can claim the socket. Updated regression test 'does not destroy upgrades on unknown paths so coexisting handlers (Vite HMR) keep working'.",
+      "tags": [
+        "websocket",
+        "vite-hmr",
+        "upgrade-handler",
+        "infinite-reload",
+        "regression"
+      ],
+      "related_bugs": [
+        "bug-048"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T14:13:00Z"
+    },
+    {
+      "id": "bug-050",
+      "timestamp": "2026-06-28T14:13:00Z",
+      "error_message": "Edits never propagated — publish() silently no-op'd because socketRef.current was null.",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "React StrictMode mounts effects twice. The first effect's socket close event fires AFTER the second effect has installed a new socket in socketRef. Unguarded `socketRef.current = null` in the stale onclose handler clobbered the live socket; subsequent publish() saw readyState !== OPEN and dropped every keystroke.",
+      "fix": "Identity-check in onclose (`if (socketRef.current === ws) socketRef.current = null`). Removed null-clearing from cleanup; we rely on the identity check instead. Verified end-to-end in two MCP-driven browser tabs.",
+      "tags": [
+        "react-strict-mode",
+        "useref",
+        "race-condition",
+        "websocket",
+        "collab",
+        "silent-failure"
+      ],
+      "related_bugs": [
+        "bug-049"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T14:13:00Z"
+    },
+    {
+      "id": "bug-051",
+      "timestamp": "2026-06-28T14:13:00Z",
+      "error_message": "Even after socket fix, peer edits were filtered out as 'older' because each browser's localStorage carried a session-local revision number.",
+      "file": "apps/web/src/app.tsx, apps/web/tests/app.test.tsx",
+      "root_cause": "loadStoredDraft restored the persisted `revision` from localStorage. A tab that had edited heavily in an earlier session loaded a huge revision; the peer's fresh `Date.now()`-based edits had a smaller revision and were silently dropped by the `next.revision > current.revision` filter.",
+      "fix": "loadStoredDraft now drops the persisted revision and always uses the fallback's revision. Revisions are session-local; only title+bodyHtml are persisted. Added a unit test pinning the regression: stored revision 9_999_999_999_999 must NOT survive load.",
+      "tags": [
+        "collab",
+        "revision",
+        "localStorage",
+        "lamport",
+        "silent-failure"
+      ],
+      "related_bugs": [
+        "bug-040",
+        "bug-050"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T14:13:00Z"
+    },
+    {
+      "id": "bug-052",
+      "timestamp": "2026-06-28T05:13:45.448Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "No early return/throw for edge case: typeof crypto !== \"undefined\" && typeof crypto.randomUUID ==",
+      "fix": "Added guard clause: if (typeof crypto !== \"undefined\" && typeof )",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-28T05:14:17.399Z"
+    },
+    {
+      "id": "bug-053",
+      "timestamp": "2026-06-28T05:14:48.609Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "No early return/throw for edge case: !value || typeof value !== \"object\"",
+      "fix": "Added guard clause: if (!value || typeof value !== \"object\")",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:14:48.609Z"
+    },
+    {
+      "id": "bug-054",
+      "timestamp": "2026-06-28T05:15:18.388Z",
+      "error_message": "Wrong reference: toEqual should be toMatchObject",
+      "file": "apps/server/tests/draft-collab.test.ts",
+      "root_cause": "Used \"toEqual\" instead of \"toMatchObject\"",
+      "fix": "Changed toEqual → toMatchObject",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:15:18.388Z"
+    },
+    {
+      "id": "bug-055",
+      "timestamp": "2026-06-28T05:15:35.248Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/server/tests/draft-collab.test.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:15:35.248Z"
+    },
+    {
+      "id": "bug-056",
+      "timestamp": "2026-06-28T05:15:49.835Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/tests/app.test.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:15:49.835Z"
+    },
+    {
+      "id": "bug-057",
+      "timestamp": "2026-06-28T05:18:58.419Z",
+      "error_message": "Wrong operator: !== should be ===",
+      "file": "apps/server/src/main.ts",
+      "root_cause": "Used \"!==\" instead of \"===\"",
+      "fix": "Changed operator !== → ===",
+      "tags": [
+        "auto-detected",
+        "operator-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:18:58.419Z"
+    },
+    {
+      "id": "bug-058",
+      "timestamp": "2026-06-28T05:19:09.162Z",
+      "error_message": "CSS fix: comments",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "comments: Comment[] → []` and clobber the partner's",
+      "fix": "Changed comments: Comment[] → []` and clobber the partner's",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 3,
+      "last_seen": "2026-06-28T05:19:36.252Z"
+    },
+    {
+      "id": "bug-059",
+      "timestamp": "2026-06-28T05:20:04.259Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check) | Also: // Optimistic local append. Server echoes back; the receive ; // by id so this is idempotent.",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-28T05:20:26.777Z"
+    },
+    {
+      "id": "bug-060",
+      "timestamp": "2026-06-28T05:20:11.742Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/app.tsx",
+      "root_cause": "No early return/throw for edge case: !safe",
+      "fix": "Added guard clause: if (!safe)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:20:11.742Z"
+    },
+    {
+      "id": "bug-061",
+      "timestamp": "2026-06-28T05:20:59.083Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/server/tests/draft-collab.test.ts",
+      "root_cause": "27 lines replaced/restructured",
+      "fix": "Rewrote 46→64 lines (27 removed) | Also: type AnyComment = { id: string; text: string; crea; data?: { title: string; bodyHtml: string; revision",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-28T05:21:06.429Z"
+    },
+    {
+      "id": "bug-062",
+      "timestamp": "2026-06-28T05:21:19.976Z",
+      "error_message": "Type error",
+      "file": "apps/server/tests/draft-collab.test.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:21:19.976Z"
+    },
+    {
+      "id": "bug-063",
+      "timestamp": "2026-06-28T05:21:36.500Z",
+      "error_message": "CSS fix: title",
+      "file": "apps/web/tests/app.test.tsx",
+      "root_cause": "title: \"fallback\", bodyHtml: \"<p>fb</p>\", revision: 1, comments: [] → \"fallback\", bodyHtml: \"<p>fb</p>\", revision: 1",
+      "fix": "Changed title: \"fallback\", bodyHtml: \"<p>fb</p>\", revision: 1, comments: [] → \"fallback\", bodyHtml: \"<p>fb</p>\", revision: 1",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T05:21:36.500Z"
+    },
+    {
+      "id": "bug-064",
+      "timestamp": "2026-06-28T14:27:00Z",
+      "error_message": "Comments never propagated to peers — adding a comment in one tab never appeared in another.",
+      "file": "apps/server/src/main.ts, apps/web/src/app.tsx, apps/server/tests/draft-collab.test.ts, apps/web/tests/app.test.tsx",
+      "root_cause": "Comments were a field on DraftState. Last-write-wins on the draft meant any peer broadcasting a draft update with no comments (or fewer comments) would clobber the partner's list. Aggravated by Node module caching in the Vite plugin: changes to attachDraftCollab in apps/server/src/main.ts don't take effect until Vite is restarted.",
+      "fix": "Split comments out into a dedicated append-only event stream (type 'comment' from client; server stores in commentsById Map; broadcasts to ALL peers including sender for idempotent reconciliation; new joiners get a 'comments' snapshot). Client now has independent `comments` useState, separate from DraftState. Server validation tightened (id non-empty, text trimmed non-empty, createdAt finite). Server tests added for cross-peer relay, dedup by id, snapshot for late joiner, malformed payload rejection. Verified live in two browser tabs with sync in both directions.",
+      "tags": [
+        "collab",
+        "comments",
+        "websocket",
+        "event-stream",
+        "last-write-wins",
+        "module-cache"
+      ],
+      "related_bugs": [
+        "bug-051"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-06-28T14:27:00Z"
     }
   ]
 }
