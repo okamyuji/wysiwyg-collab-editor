@@ -286,11 +286,19 @@ function wrapSegmentsByWidth(
       last.push({ ...style, text });
     }
   };
+  // Iterate by grapheme cluster, not code point, so combining marks and ZWJ
+  // emoji sequences don't get split across line breaks.
+  const segmenter =
+    typeof Intl !== "undefined" && typeof Intl.Segmenter === "function"
+      ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
+      : null;
+  const graphemes = (text: string) =>
+    segmenter ? Array.from(segmenter.segment(text), (s) => s.segment) : Array.from(text);
   for (const inputLine of splitSegmentsIntoLines(segments)) {
     for (const segment of inputLine) {
       let buffer = "";
       let bufferWidth = 0;
-      for (const ch of segment.text) {
+      for (const ch of graphemes(segment.text)) {
         const chWidth = font.widthOfTextAtSize(ch, size);
         if (lineWidth + bufferWidth + chWidth > maxWidth && (buffer || lineWidth > 0)) {
           pushSegment(segment, buffer);

@@ -265,14 +265,30 @@ export function App() {
       }
       recompute();
     };
-    channel.postMessage({ kind: "hello", id: selfId } satisfies PresenceMessage);
+    const sayHello = () => {
+      peers.set(selfId, Date.now());
+      channel.postMessage({ kind: "hello", id: selfId } satisfies PresenceMessage);
+      recompute();
+    };
+    sayHello();
     const heartbeat = window.setInterval(() => {
       peers.set(selfId, Date.now());
       channel.postMessage({ kind: "heartbeat", id: selfId } satisfies PresenceMessage);
       recompute();
     }, presenceHeartbeatMs);
+    // Browsers throttle setInterval in hidden tabs down to ~1/min, so a
+    // backgrounded peer can miss the 15s timeout. Re-broadcasting hello on
+    // visibility/focus regain lets others re-discover us without the count
+    // flapping.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") sayHello();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", sayHello);
     return () => {
       window.clearInterval(heartbeat);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", sayHello);
       try {
         channel.postMessage({ kind: "bye", id: selfId } satisfies PresenceMessage);
       } catch {
