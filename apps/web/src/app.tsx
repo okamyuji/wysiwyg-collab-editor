@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import { type ClipboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import { sanitizeRichTextHtml } from "./rich-text.js";
 
@@ -212,20 +213,18 @@ function textToHtml(text: string) {
 }
 
 function textFromHtml(html: string) {
-  // String-only transformation: strip tags and decode the few entities the
-  // sanitizer emits. No DOM API touched, so CodeQL has no taint path to
-  // worry about. Acceptable here because the input passes through
-  // sanitizeRichTextHtml at every entry point and uses a tiny tag allowlist.
-  return html
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/(p|div)>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, " ");
+  // DOMPurify (CodeQL-recognized sanitizer barrier) strips all markup and
+  // returns plain text. DOMParser on the already-purified string then
+  // decodes any remaining entities through textContent — the regex
+  // approach CodeQL flagged for "incomplete multi-character sanitization"
+  // and "double escaping" is gone entirely.
+  const purified = DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: [],
+    RETURN_TRUSTED_TYPE: false,
+  });
+  const doc = new DOMParser().parseFromString(purified, "text/html");
+  return doc.body.textContent ?? "";
 }
 
 function getBrowserStorage(): Storage | null {
