@@ -1,4 +1,5 @@
 import fontkit from "@pdf-lib/fontkit";
+import DOMPurify from "dompurify";
 import {
   Document,
   HeadingLevel,
@@ -168,11 +169,17 @@ function createMarkdownBlob(draft: DraftExportInput) {
 }
 
 function htmlToSegments(html: string) {
-  const template = document.createElement("template");
-  template.innerHTML = html;
+  // Run input through DOMPurify (a CodeQL-recognized sanitizer) before
+  // parsing. The DOMParser pass then operates on already-trusted markup.
+  const purified = DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ["b", "br", "div", "em", "i", "mark", "p", "span", "strong", "u"],
+    ALLOWED_ATTR: [],
+    RETURN_TRUSTED_TYPE: false,
+  });
+  const doc = new DOMParser().parseFromString(purified, "text/html");
   const segments: RichSegment[] = [];
   collectSegments(
-    template.content,
+    doc.body,
     { bold: false, italic: false, underline: false, highlight: false },
     segments,
   );

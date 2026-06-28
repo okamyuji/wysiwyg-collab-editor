@@ -27,3 +27,157 @@
 | 11:37 | Added Japanese/English auto-localized UI and verified locale UX | apps/web/src/app.tsx, e2e/tests/editor-ux.spec.ts, apps/web/src/styles/global.css | browser locale switches en/ja automatically; E2E 12/12 passes; Japanese desktop/mobile overflow checks are clean | ~1600 |
 | 11:51 | Added online collaboration and rich-text decoration coverage | apps/web/src/app.tsx, apps/web/src/styles/global.css, e2e/tests/editor-ux.spec.ts | two active pages sync title/body edits; bold/italic/underline/highlight are E2E-tested; all quality gates and 18/18 E2E pass | ~2200 |
 | 12:18 | Completed export, OWASP, browser UX verification, README/.gitignore, and initial commit | apps/web/src/exporters.ts, apps/web/src/rich-text.ts, e2e/tests/editor-ux.spec.ts, package.json, README.md, .gitignore | PDF/DOCX/Markdown decorated export verified; OWASP security gate clean; browser UX screenshots clean; initial commit created | ~3600 |
+
+## Session: 2026-06-28 12:38
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 12:52 | Edited apps/web/src/exporters.ts | modified createPdfBlob() | ~687 |
+| 12:52 | Edited apps/web/src/exporters.ts | added 2 condition(s) | ~407 |
+| 12:52 | Edited package.json | inline fix | ~24 |
+| 12:53 | Edited apps/web/src/app.tsx | expanded (+8 lines) | ~108 |
+| 12:53 | Edited apps/web/src/app.tsx | CSS: collaborator, count | ~44 |
+| 12:53 | Edited apps/web/src/app.tsx | CSS: collaborator, count | ~30 |
+| 12:53 | Edited apps/web/src/app.tsx | 8→9 lines | ~161 |
+| 12:53 | Edited apps/web/src/app.tsx | added 5 condition(s) | ~802 |
+| 12:53 | Edited apps/web/src/app.tsx | 3→3 lines | ~44 |
+| 12:57 | Created tools/dev.mjs | — | ~730 |
+| 12:57 | Edited package.json | inline fix | ~10 |
+| 13:02 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/MEMORY.md | — | ~36 |
+| 13:02 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/reference_pdf_lib_cjk_subset_bug.md | — | ~190 |
+| 13:03 | Session end: 13 writes across 6 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~5672 tok |
+| 13:15 | Session end: 13 writes across 6 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~5672 tok |
+| 13:15 | Session end: 13 writes across 6 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~5672 tok |
+| 13:16 | Session end: 13 writes across 6 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~5672 tok |
+| 13:20 | Session end: 13 writes across 6 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~5672 tok |
+| 13:25 | Edited apps/web/src/app.tsx | added 1 condition(s) | ~354 |
+| 13:25 | Edited apps/web/src/exporters.ts | modified Segmenter() | ~198 |
+| 13:26 | Edited tools/dev.mjs | added 2 condition(s) | ~739 |
+| 13:27 | Session end: 16 writes across 6 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~7015 tok |
+| 13:28 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/feedback_code_review_reply_per_item.md | — | ~187 |
+| 13:28 | Edited ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/MEMORY.md | 2→3 lines | ~68 |
+| 13:28 | Session end: 18 writes across 7 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~7289 tok |
+| 13:28 | Session end: 18 writes across 7 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~7289 tok |
+| 13:28 | Session end: 18 writes across 7 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~7289 tok |
+| 13:29 | Session end: 18 writes across 7 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 11 reads | ~7289 tok |
+| 13:30 | Edited tools/migrate.mjs | added 2 condition(s) | ~184 |
+| 13:30 | Edited .github/workflows/ci.yml | 5→10 lines | ~64 |
+| 13:31 | Edited .github/workflows/dast-zap-full.yml | 8→13 lines | ~79 |
+| 13:32 | Session end: 21 writes across 10 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 14 reads | ~8019 tok |
+| 13:32 | Session end: 21 writes across 10 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 14 reads | ~8019 tok |
+| 13:33 | Session end: 21 writes across 10 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 14 reads | ~8019 tok |
+| 13:34 | Session end: 21 writes across 10 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 14 reads | ~8019 tok |
+| 13:35 | Session end: 21 writes across 10 files (exporters.ts, package.json, app.tsx, dev.mjs, MEMORY.md) | 14 reads | ~8019 tok |
+
+## Session: 2026-06-28 13:37
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 13:43 | Created apps/server/src/main.ts | — | ~893 |
+| 13:43 | Edited apps/web/vite.config.ts | expanded (+6 lines) | ~38 |
+| 13:43 | Edited apps/web/src/app.tsx | 10→8 lines | ~77 |
+| 13:43 | Edited apps/web/src/app.tsx | modified getBrowserStorage() | ~49 |
+| 13:43 | Edited apps/web/src/app.tsx | 3→3 lines | ~48 |
+| 13:44 | Edited apps/web/src/app.tsx | modified applyIncomingDraft() | ~579 |
+| 13:45 | WebSocket collab implemented at /ws/draft (cross-browser presence + draft sync) | apps/server/src/main.ts, apps/web/src/app.tsx, apps/web/vite.config.ts | tests+lint+check green, 2-client smoke verified | ~3000 |
+| 13:45 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/project_collab_websocket_arch.md | — | ~242 |
+| 13:46 | Edited ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/MEMORY.md | 1→2 lines | ~67 |
+| 13:46 | Session end: 8 writes across 5 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 4 reads | ~2954 tok |
+| 13:49 | Edited apps/web/vite.config.ts | reduced (-6 lines) | ~11 |
+| 13:49 | Edited apps/web/src/app.tsx | added 2 condition(s) | ~266 |
+| 13:49 | Edited apps/web/src/app.tsx | modified connect() | ~33 |
+| 13:49 | Edited apps/server/src/main.ts | added nullish coalescing | ~847 |
+| 13:50 | Created apps/server/tests/draft-collab.test.ts | — | ~1407 |
+| 13:53 | Edited apps/web/src/app.tsx | CSS: sync, current, now | ~252 |
+| 13:53 | Edited apps/web/src/app.tsx | modified updateDraft() | ~69 |
+| 13:54 | Edited apps/web/tests/app.test.tsx | CSS: Regression | ~398 |
+| 13:55 | fix: direct WS (no proxy) + Lamport revision + 5 integ tests | apps/web/{vite.config.ts,src/app.tsx,tests/app.test.tsx}, apps/server/{src/main.ts,tests/draft-collab.test.ts}, .wolf/buglog.json | tests 14/14 green, check+lint green | ~5500 |
+| 13:55 | Session end: 16 writes across 7 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 6 reads | ~6237 tok |
+| 13:58 | Edited apps/web/package.json | 6→7 lines | ~56 |
+| 13:58 | Edited apps/server/package.json | 5→8 lines | ~45 |
+| 13:59 | Created apps/web/vite.config.ts | — | ~592 |
+| 13:59 | Edited apps/web/src/app.tsx | host() → origins() | ~175 |
+| 14:01 | Edited apps/server/src/main.ts | 6→8 lines | ~134 |
+| 14:01 | Edited apps/server/tests/draft-collab.test.ts | added 1 condition(s) | ~322 |
+| 14:04 | Edited apps/web/src/app.tsx | CSS: collab | ~255 |
+| 14:04 | Edited apps/web/src/app.tsx | inline fix | ~20 |
+| 14:04 | Edited apps/web/tests/app.test.tsx | 3→3 lines | ~55 |
+| 14:04 | Edited apps/web/tests/app.test.tsx | expanded (+35 lines) | ~384 |
+| 14:11 | Edited apps/web/src/app.tsx | CSS: check | ~506 |
+| 14:13 | Edited apps/web/src/app.tsx | added 4 condition(s) | ~338 |
+| 14:13 | Edited apps/web/src/app.tsx | CSS: comments | ~272 |
+| 14:14 | Edited apps/web/src/app.tsx | CSS: comments | ~79 |
+| 14:14 | Edited apps/web/src/app.tsx | CSS: comments | ~88 |
+| 14:14 | Edited apps/web/src/app.tsx | added 1 condition(s) | ~200 |
+| 14:14 | Edited apps/web/src/app.tsx | CSS: hour, minute | ~548 |
+| 14:14 | Edited apps/web/src/app.tsx | CSS: addComment, commentEmpty | ~42 |
+| 14:14 | Edited apps/web/src/app.tsx | CSS: addComment, commentEmpty | ~37 |
+| 14:14 | Edited apps/server/src/main.ts | added 2 condition(s) | ~265 |
+| 14:14 | Edited apps/server/src/main.ts | 16→13 lines | ~126 |
+| 14:15 | Edited apps/server/tests/draft-collab.test.ts | toEqual() → toMatchObject() | ~102 |
+| 14:15 | Edited apps/server/tests/draft-collab.test.ts | toEqual() → toMatchObject() | ~64 |
+| 14:15 | Edited apps/server/tests/draft-collab.test.ts | 1→6 lines | ~61 |
+| 14:15 | Edited apps/server/tests/draft-collab.test.ts | added optional chaining | ~441 |
+| 14:15 | Edited apps/web/tests/app.test.tsx | inline fix | ~29 |
+| 14:15 | Edited apps/web/tests/app.test.tsx | added optional chaining | ~288 |
+| 14:16 | Edited apps/web/tests/app.test.tsx | 7→8 lines | ~125 |
+| 14:18 | Edited apps/server/src/main.ts | modified isComment() | ~253 |
+| 14:18 | Edited apps/server/src/main.ts | modified attachDraftCollab() | ~204 |
+| 14:18 | Edited apps/server/src/main.ts | added 1 condition(s) | ~118 |
+| 14:18 | Edited apps/server/src/main.ts | added 4 condition(s) | ~264 |
+| 14:19 | Edited apps/web/src/app.tsx | 14→16 lines | ~152 |
+| 14:19 | Edited apps/web/src/app.tsx | 3→4 lines | ~53 |
+| 14:19 | Edited apps/web/src/app.tsx | 4→6 lines | ~65 |
+| 14:19 | Edited apps/web/src/app.tsx | added 2 condition(s) | ~352 |
+| 14:19 | Edited apps/web/src/app.tsx | 10→10 lines | ~90 |
+| 14:20 | Edited apps/web/src/app.tsx | added optional chaining | ~71 |
+| 14:20 | Edited apps/web/src/app.tsx | CSS: incoming, current, incoming | ~250 |
+| 14:20 | Edited apps/web/src/app.tsx | added 2 condition(s) | ~122 |
+| 14:20 | Edited apps/web/src/app.tsx | added optional chaining | ~174 |
+| 14:20 | Edited apps/web/src/app.tsx | 18→18 lines | ~255 |
+| 14:20 | Edited apps/server/tests/draft-collab.test.ts | expanded (+18 lines) | ~872 |
+| 14:21 | Edited apps/server/tests/draft-collab.test.ts | 6→5 lines | ~22 |
+| 14:21 | Edited apps/server/tests/draft-collab.test.ts | 3→3 lines | ~58 |
+| 14:21 | Edited apps/web/tests/app.test.tsx | 2→2 lines | ~33 |
+| 14:27 | Session end: 62 writes across 8 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 9 reads | ~17681 tok |
+| 14:30 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/project_collab_websocket_arch.md | — | ~503 |
+| 14:30 | Created ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/feedback_verify_in_browser.md | — | ~205 |
+| 14:31 | Edited ../../../.claude/projects/-Users-yujiokamoto-devs-typescript-wysiwyg-collab-editor/memory/MEMORY.md | 1→2 lines | ~72 |
+| 14:35 | Session end: 65 writes across 9 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 9 reads | ~18516 tok |
+| 14:38 | Edited apps/web/src/app.tsx | modified textFromHtml() | ~97 |
+| 14:39 | Edited apps/web/src/app.tsx | added 1 condition(s) | ~149 |
+| 14:39 | Edited apps/web/src/rich-text.ts | modified sanitizeRichTextHtml() | ~180 |
+| 14:39 | Edited apps/web/src/exporters.ts | modified htmlToSegments() | ~115 |
+| 14:40 | Edited apps/web/src/app.tsx | 10→14 lines | ~220 |
+| 14:43 | Session end: 70 writes across 11 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 11 reads | ~21147 tok |
+| 14:43 | Session end: 70 writes across 11 files (main.ts, vite.config.ts, app.tsx, project_collab_websocket_arch.md, MEMORY.md) | 11 reads | ~21147 tok |
+| 14:46 | Edited apps/web/src/rich-text.ts | modified sanitizeRichTextHtml() | ~289 |
+| 14:46 | Edited apps/web/src/exporters.ts | modified htmlToSegments() | ~139 |
+| 14:46 | Edited apps/web/src/exporters.ts | added 1 import(s) | ~22 |
+| 14:46 | Edited apps/web/src/app.tsx | CSS: transformation | ~176 |
+| 14:46 | Edited apps/web/src/rich-text.ts | 6→9 lines | ~149 |
+| 14:47 | Edited apps/web/src/rich-text.ts | 4→4 lines | ~44 |
+| 14:47 | Edited apps/web/src/rich-text.ts | inline fix | ~20 |
+| 14:47 | Edited apps/web/src/rich-text.ts | 4→5 lines | ~52 |
+| 14:48 | Edited apps/web/src/exporters.ts | modified htmlToSegments() | ~128 |
+| 14:48 | Edited apps/web/src/app.tsx | 14→12 lines | ~180 |
+| 14:51 | Edited apps/server/src/main.ts | 5→10 lines | ~103 |
+| 14:51 | Edited apps/server/src/main.ts | modified validateDraftPayload() | ~140 |
+| 14:51 | Edited apps/server/src/main.ts | added error handling | ~229 |
+| 14:51 | Edited apps/server/src/main.ts | added 1 condition(s) | ~112 |
+| 14:52 | Edited apps/server/src/main.ts | modified if() | ~190 |
+| 14:52 | Edited apps/web/src/app.tsx | 5→10 lines | ~104 |
+| 14:52 | Edited apps/web/src/app.tsx | modified normalizeComments() | ~279 |
+| 14:52 | Edited apps/web/src/app.tsx | expanded (+6 lines) | ~127 |
+| 14:52 | Edited apps/web/src/app.tsx | expanded (+8 lines) | ~69 |
+| 14:52 | Edited apps/web/src/app.tsx | modified applyIncomingDraft() | ~73 |
+| 14:53 | Edited apps/web/src/app.tsx | added nullish coalescing | ~295 |
+| 14:53 | Edited apps/web/src/app.tsx | added 3 condition(s) | ~288 |
+| 14:53 | Edited apps/web/src/app.tsx | modified publish() | ~144 |
+| 14:53 | Edited apps/web/src/app.tsx | modified if() | ~138 |
+| 14:53 | Edited apps/server/tests/draft-collab.test.ts | modified reject() | ~158 |
+| 14:53 | Edited apps/server/tests/draft-collab.test.ts | modified openClient() | ~128 |
+| 14:54 | Edited apps/server/tests/draft-collab.test.ts | 13→15 lines | ~234 |
+| 14:55 | Edited apps/server/tests/draft-collab.test.ts | added optional chaining | ~954 |
+| 14:55 | Edited apps/web/tests/app.test.tsx | inline fix | ~34 |
+| 14:55 | Edited apps/web/tests/app.test.tsx | expanded (+19 lines) | ~258 |
