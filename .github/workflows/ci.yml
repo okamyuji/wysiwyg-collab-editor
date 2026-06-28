@@ -11,6 +11,11 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Least-privilege default for every job; individual jobs can opt up if they
+# ever need to write (none currently do).
+permissions:
+  contents: read
+
 env:
   NODE_VERSION: 24
   PNPM_VERSION: 11.9.0
