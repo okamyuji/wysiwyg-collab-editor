@@ -21,17 +21,10 @@ env:
   PNPM_VERSION: 11.9.0
 
 jobs:
+  # gitleaks@v3とGITHUB_TOKEN設定を内蔵した中央ワークフロー。
+  # .gitleaks.tomlはリポジトリルートからgitleaksが自動検出する。
   scan-secrets:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        with:
-          config-path: .gitleaks.toml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: okamyuji/reusable-workflows/.github/workflows/security-scan.yml@v1
 
   migrate-dryrun:
     runs-on: ubuntu-24.04
