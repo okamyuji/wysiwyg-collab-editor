@@ -2,6 +2,8 @@
 
 WYSIWYG Collab Editor は、ブラウザ上で複数ユーザーが同じ文書を編集し、装飾付きの文書を PDF / DOCX / Markdown にエクスポートできる共同編集エディターです。
 
+現行実装はフェーズ1（MVP、in-memory WebSocket リレー＋contentEditable、永続化なし）です。設計文書が規定する OT（ShareDB）、Quill.js、PostgreSQL 永続化、Redis Pub/Sub、S3 互換ストレージ、日本語 IME 対応はフェーズ2以降の適用です（`docs/design/adr/ADR-0029-フェーズ分割によるMVP再定義.md` と `ACCEPTANCE.md` を参照）。
+
 ## 主な機能
 
 - 文書タイトルと本文の編集
