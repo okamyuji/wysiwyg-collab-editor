@@ -1,6 +1,6 @@
 # 受け入れ基準（ACCEPTANCE.md）
 
-このファイルはレビュー収束の合格ラインを凍結するものです。基準の変更にはユーザーの明示的な承認が必要です（`~/.claude/rules/common/code-review-convergence.md` R1）。合格ラインは2026-07-05にユーザーが「段階基準」として決定しました。v1がすべて満たされた時点でレビューは収束扱いとなり、v2以降は別マイルストーンです。
+このファイルはレビュー収束の合格ラインを凍結するものです。基準の変更にはユーザーの明示的な承認が必要です（レビュー収束プロトコル R1: 受け入れ基準の凍結）。合格ラインは2026-07-05にユーザーが「段階基準」として決定しました。v1がすべて満たされた時点でレビューは収束扱いとなり、v2以降は別マイルストーンです。
 
 承認記録: 2026-07-05 ユーザー指示により、v1合格基準を現行実装が既に満たしている機械判定項目へ改訂しました（フェーズ1＝現行実装水準。ADR-0029参照）。日本語IME、性能予算、カバレッジ閾値、永続化、OTの各項目は次フェーズの一覧へ移しています。
 
@@ -13,13 +13,13 @@
 | 1 | server・web・export-workerの全ユニットテスト30件（server 14件、web 14件、export-worker 2件）がpassする | `pnpm -r test` が終了コード0 |
 | 2 | 同一 revision を生成した2ピアの更新が決定論的に片方へ確定し、どちらのピアも古い状態へ退行しない | 既存ユニット `assigns increasing seq so equal-revision peers do not silently drop each other`（apps/server/tests/draft-collab.test.ts。項目1に含まれる） |
 | 3 | 同一IDのコメントを重複送信しても状態は1件のみ反映される | 既存ユニット `de-duplicates comments by id (idempotent re-send)`（項目1に含まれる） |
-| 4 | 途中参加クライアントが参加時点の最新文書とコメント全件を受信する | 既存ユニット `late joiners receive the latest snapshot`＋`comments propagate to all peers`（項目1に含まれる） |
+| 4 | 途中参加クライアントが参加時点の最新文書とコメント全件を受信する | 既存ユニット `late joiners receive the latest snapshot`＋`comments propagate to all peers including the sender (echo) and survive concurrent draft updates`（項目1に含まれる） |
 | 5 | ベースラインのセキュリティヘッダが応答へ付与される | 既存ユニット `sets baseline security headers`（apps/server/tests/main.test.ts。項目1に含まれる） |
 | 6 | 既存E2Eの主要導線7件（編集フロー、パネル開閉、ビューポート維持、2クライアント同期、装飾適用、3形式エクスポート、言語切替）がchromiumとfirefoxでpassする | サーバー新規起動後に `cd e2e && npx playwright test --project=chromium --workers=1 --grep-invert "sanitizes"` と同 `--project=firefox` がそれぞれ終了コード0 |
 | 7 | 型検査が通過する | `pnpm check` が終了コード0 |
 | 8 | 文書lintが Critical 0 / High 0 / Medium 0 / Low 0 を維持する | `python3 tools/lint_docs.py docs/` が終了コード0 |
 | 9 | トレーサビリティ検査が通過する | `node tools/traceability_check.mjs` が終了コード0 |
-| 10 | マイグレーションのdry-runが通過する | `node tools/migrate.mjs dry` が終了コード0 |
+| 10 | マイグレーションのdry-runが通過する（migrations/はフェーズ2資産ですが、dry-runはDB接続を伴わない資産整合性検査としてフェーズ1でも維持します） | `node tools/migrate.mjs dry` が終了コード0 |
 
 補足（2026-07-05時点の既知の未達事項。v1の合否には影響しない）:
 
