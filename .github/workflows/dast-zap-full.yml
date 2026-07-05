@@ -16,11 +16,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: zap full scan
+        env:
+          STAGING_URL: ${{ secrets.STAGING_URL }}
         run: |
+          if [ -z "$STAGING_URL" ]; then
+            echo "::warning::STAGING_URL secret is not configured; skipping ZAP full scan."
+            mkdir -p zap
+            exit 0
+          fi
           docker run --rm \
             -v "$PWD/zap:/zap/wrk" \
             -t ghcr.io/zaproxy/zaproxy:2.17.0 \
-            zap-full-scan.py -t "${{ secrets.STAGING_URL }}" -r zap-full.html -J zap-full.json -I
+            zap-full-scan.py -t "$STAGING_URL" -r zap-full.html -J zap-full.json -I
       - uses: actions/upload-artifact@v4
         if: always()
         with:
