@@ -222,7 +222,7 @@ describe("draft collab websocket", () => {
 
     const drafts = b.messages.filter((m) => m.type === "draft");
     expect(drafts).toHaveLength(1);
-    expect((drafts[0]?.data as { title: string }).title).toBe("newer");
+    expect((drafts[0]?.data as { title: string } | undefined)?.title).toBe("newer");
 
     await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
   });
