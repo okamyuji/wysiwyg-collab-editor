@@ -5,3 +5,9 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+# 脆弱性のあるバージョンを踏まないための下限固定。
+# 範囲指定だと解決版が揺れて脆弱版が残るため、必ず具体バージョンで書く。
+overrides:
+  # 8.5.26 は公開7日未満で minimumReleaseAge に弾かれるため 8.5.25 に固定する。
+  postcss@<8.5.23: "8.5.25"
