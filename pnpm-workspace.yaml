@@ -11,3 +11,4 @@ allowBuilds:
 overrides:
   # 8.5.26 は公開7日未満で minimumReleaseAge に弾かれるため 8.5.25 に固定する。
   postcss@<8.5.23: "8.5.25"
+  qs@<6.16.0: "6.16.0"
