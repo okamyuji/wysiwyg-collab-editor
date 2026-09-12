@@ -12,3 +12,14 @@ overrides:
   # 8.5.26 は公開7日未満で minimumReleaseAge に弾かれるため 8.5.25 に固定する。
   postcss@<8.5.23: "8.5.25"
   qs@<6.16.0: "6.16.0"
+  # vite-plus 0.2.x が vitest 4.1.10 を exact で要求するため、脆弱性修正版 4.1.11 に揃える。
+  vitest@4.1.10: "4.1.11"
+  "@vitest/browser@4.1.10": "4.1.11"
+  "@vitest/browser-preview@4.1.10": "4.1.11"
+  "@vitest/expect@4.1.10": "4.1.11"
+  "@vitest/mocker@4.1.10": "4.1.11"
+  "@vitest/pretty-format@4.1.10": "4.1.11"
+  "@vitest/runner@4.1.10": "4.1.11"
+  "@vitest/snapshot@4.1.10": "4.1.11"
+  "@vitest/spy@4.1.10": "4.1.11"
+  "@vitest/utils@4.1.10": "4.1.11"
