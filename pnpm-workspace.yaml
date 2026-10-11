@@ -23,3 +23,6 @@ overrides:
   "@vitest/snapshot@4.1.10": "4.1.11"
   "@vitest/spy@4.1.10": "4.1.11"
   "@vitest/utils@4.1.10": "4.1.11"
+
+# 公開から7日未満の版を取得しない。pnpm 11 は .npmrc の minimum-release-age を読まないため、ここに書く。
+minimumReleaseAge: 10080 # 60 * 24 * 7 = 7日（分）
