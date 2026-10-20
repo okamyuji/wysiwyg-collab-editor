@@ -48,3 +48,4 @@ Thumbs.db
 # Security and scanner outputs
 semgrep.sarif
 gitleaks-report.*
+.wolf/hooks/_session.json
