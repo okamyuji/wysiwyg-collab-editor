@@ -14,17 +14,6 @@ overrides:
   qs@<6.16.0: "6.16.0"
   proxy-addr@<2.0.8: "2.0.8"
   tinypool@<2.1.2: "2.2.0"
-  # vite-plus 0.2.x が vitest 4.1.10 を exact で要求するため、脆弱性修正版 4.1.11 に揃える。
-  vitest@4.1.10: "4.1.11"
-  "@vitest/browser@4.1.10": "4.1.11"
-  "@vitest/browser-preview@4.1.10": "4.1.11"
-  "@vitest/expect@4.1.10": "4.1.11"
-  "@vitest/mocker@4.1.10": "4.1.11"
-  "@vitest/pretty-format@4.1.10": "4.1.11"
-  "@vitest/runner@4.1.10": "4.1.11"
-  "@vitest/snapshot@4.1.10": "4.1.11"
-  "@vitest/spy@4.1.10": "4.1.11"
-  "@vitest/utils@4.1.10": "4.1.11"
 
 # 公開から7日未満の版を取得しない。pnpm 11 は .npmrc の minimum-release-age を読まないため、ここに書く。
 minimumReleaseAge: 10080 # 60 * 24 * 7 = 7日（分）
