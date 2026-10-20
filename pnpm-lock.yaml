@@ -8,6 +8,7 @@ overrides:
   postcss@<8.5.23: 8.5.25
   qs@<6.16.0: 6.16.0
   proxy-addr@<2.0.8: 2.0.8
+  tinypool@<2.1.2: 2.2.0
   vitest@4.1.10: 4.1.11
   '@vitest/browser@4.1.10': 4.1.11
   '@vitest/browser-preview@4.1.10': 4.1.11
@@ -3467,8 +3468,8 @@ packages:
     resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
     engines: {node: '>=12.0.0'}
 
-  tinypool@2.1.0:
-    resolution: {integrity: sha512-Pugqs6M0m7Lv1I7FtxN4aoyToKg1C4tu+/381vH35y8oENM/Ai7f7C4StcoK4/+BSw9ebcS8jRiVrORFKCALLw==}
+  tinypool@2.2.0:
+    resolution: {integrity: sha512-jBrmx4lYmaC9k/mgPbylxs7kBUxHtD8256up+HjLaDFfXScKJQyil+SWXSvhAtT7XHo+yTVlpB81PGmHP8oLSQ==}
     engines: {node: ^20.0.0 || >=22.0.0}
 
   tinyrainbow@3.1.0:
@@ -6646,7 +6647,7 @@ snapshots:
 
   oxfmt@0.58.0(vite-plus@0.2.5(@opentelemetry/api@1.9.1)(@types/node@24.13.2)(esbuild@0.28.1)(jsdom@29.1.1)(terser@5.51.2)(tsx@4.22.4)(typescript@6.0.3)(vite@8.1.0(@types/node@24.13.2)(esbuild@0.28.1)(terser@5.51.2)(tsx@4.22.4))):
     dependencies:
-      tinypool: 2.1.0
+      tinypool: 2.2.0
     optionalDependencies:
       '@oxfmt/binding-android-arm-eabi': 0.58.0
       '@oxfmt/binding-android-arm64': 0.58.0
@@ -7262,7 +7263,7 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.7)
       picomatch: 4.0.7
 
-  tinypool@2.1.0: {}
+  tinypool@2.2.0: {}
 
   tinyrainbow@3.1.0: {}
 
