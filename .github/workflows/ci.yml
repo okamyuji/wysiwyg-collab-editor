@@ -26,6 +26,14 @@ jobs:
   scan-secrets:
     uses: okamyuji/reusable-workflows/.github/workflows/security-scan.yml@v1
 
+  node-ci:
+    needs: [scan-secrets]
+    uses: okamyuji/reusable-workflows/.github/workflows/node-ci.yml@v1
+    with:
+      node-version: "24"
+      lint-command: "run lint && pnpm run format"
+      typecheck-command: "run check"
+
   migrate-dryrun:
     runs-on: ubuntu-24.04
     needs: [scan-secrets]
@@ -75,6 +83,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - scan-secrets
+      - node-ci
       - migrate-dryrun
       - traceability-check
       - doclint
