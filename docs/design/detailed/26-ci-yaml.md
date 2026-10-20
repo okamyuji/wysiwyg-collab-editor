@@ -47,7 +47,7 @@ jobs:
           POSTGRES_USER: ci
           POSTGRES_PASSWORD: ci
           POSTGRES_DB: ci
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -56,7 +56,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -78,7 +79,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -93,9 +95,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }}, cache: pnpm }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/web check
 
@@ -106,9 +111,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }}, cache: pnpm }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/server check
 
@@ -119,9 +127,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }}, cache: pnpm }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/web test --coverage --coverage.thresholds.lines=80 --coverage.thresholds.statements=80 --coverage.thresholds.branches=70 --coverage.thresholds.functions=80
       - uses: actions/upload-artifact@v4
@@ -135,18 +146,21 @@ jobs:
       postgres:
         image: postgres:18-alpine
         env: { POSTGRES_USER: ci, POSTGRES_PASSWORD: ci, POSTGRES_DB: ci }
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
         image: redis:8-alpine
-        ports: ['6379:6379']
+        ports: ["6379:6379"]
         options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }}, cache: pnpm }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/server test --coverage --coverage.thresholds.lines=80 --coverage.thresholds.statements=80 --coverage.thresholds.branches=70 --coverage.thresholds.functions=80
         env:
@@ -168,9 +182,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }}, cache: pnpm }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/web build
       - uses: actions/upload-artifact@v4
@@ -183,9 +200,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }}, cache: pnpm }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/server exec tsc --noEmit
 
@@ -236,30 +256,55 @@ jobs:
   test-e2e:
     name: test-e2e
     runs-on: ubuntu-24.04
-    needs: [check-web, check-server, test-unit-web, test-unit-server, build-web, build-server, sast-semgrep, container-scan]
+    needs:
+      [
+        check-web,
+        check-server,
+        test-unit-web,
+        test-unit-server,
+        build-web,
+        build-server,
+        sast-semgrep,
+        container-scan,
+      ]
     services:
       postgres:
         image: postgres:18-alpine
         env: { POSTGRES_USER: ci, POSTGRES_PASSWORD: ci, POSTGRES_DB: ci }
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
         image: redis:8-alpine
-        ports: ['6379:6379']
+        ports: ["6379:6379"]
         options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
       minio:
         image: minio/minio:RELEASE.2025-10-15T17-29-55Z
-        env: { MINIO_ROOT_USER: ci, MINIO_ROOT_PASSWORD: ciciciciciciciciciciciciciciciciciciciciciciciciciciciciciciciic }
-        ports: ['9000:9000']
+        env:
+          {
+            MINIO_ROOT_USER: ci,
+            MINIO_ROOT_PASSWORD: ciciciciciciciciciciciciciciciciciciciciciciciciciciciciciciciic,
+          }
+        ports: ["9000:9000"]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: ${{ env.PNPM_VERSION }} }
+        with:
+          version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }}, cache: pnpm }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm migrate up
-        env: { DB_HOST: localhost, DB_PORT: 5432, DB_NAME: ci, DB_USER: ci, DB_PASSWORD: ci, DB_SSL_MODE: disable }
+        env:
+          {
+            DB_HOST: localhost,
+            DB_PORT: 5432,
+            DB_NAME: ci,
+            DB_USER: ci,
+            DB_PASSWORD: ci,
+            DB_SSL_MODE: disable,
+          }
       - run: pnpm seed:local
       - run: pnpm --filter ./apps/server build && pnpm --filter ./apps/server exec node dist/main.js &
       - run: pnpm --filter ./apps/web build && pnpm --filter ./apps/web exec vite preview --port 5173 &
@@ -269,9 +314,11 @@ jobs:
         env: { PREVIEW_URL: http://localhost:5173 }
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: e2e-results, path: |
-          e2e/test-results
-          e2e/playwright-report }
+        with:
+          name: e2e-results
+          path: |
+            e2e/test-results
+            e2e/playwright-report
 
   dast-zap-baseline:
     name: dast-zap-baseline
@@ -301,7 +348,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ env.NODE_VERSION }} }
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - run: node tools/traceability_check.mjs
 
   doclint:
@@ -311,7 +359,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: '3.12' }
+        with: { python-version: "3.12" }
       - run: python3 tools/lint_docs.py docs/
 
   summary:
