@@ -77,7 +77,9 @@ describe("draft collab websocket", () => {
     const a = await openClient(url);
     const b = await openClient(url);
 
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "t", bodyHtml: "<p>x</p>", revision: 7 } }));
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "t", bodyHtml: "<p>x</p>", revision: 7 } }),
+    );
 
     const relayed = await waitFor(() => b.messages.find((m) => m.type === "draft"));
     expect(relayed.data).toMatchObject({ title: "t", bodyHtml: "<p>x</p>", revision: 7 });
@@ -95,7 +97,9 @@ describe("draft collab websocket", () => {
     await waitFor(() => a.messages.find((m) => m.type === "presence" && m.count === 2));
 
     await closeQuiet(b.ws);
-    await waitFor(() => a.messages.filter((m) => m.type === "presence").pop()?.count === 1 ? true : undefined);
+    await waitFor(() =>
+      a.messages.filter((m) => m.type === "presence").pop()?.count === 1 ? true : undefined,
+    );
 
     await closeQuiet(a.ws);
   });
@@ -106,7 +110,12 @@ describe("draft collab websocket", () => {
     // Use an observer client to know when the server has stored the latest
     // draft — a fixed setTimeout flaked under CI load.
     const observer = await openClient(url);
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "snap", bodyHtml: "<p>s</p>", revision: 42 } }));
+    a.ws.send(
+      JSON.stringify({
+        type: "draft",
+        data: { title: "snap", bodyHtml: "<p>s</p>", revision: 42 },
+      }),
+    );
     await waitFor(() => observer.messages.find((m) => m.type === "draft"));
 
     const b = await openClient(url);
@@ -198,10 +207,21 @@ describe("draft collab websocket", () => {
     const a = await openClient(url);
     const b = await openClient(url);
 
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "frac", bodyHtml: "<p/>", revision: 1.5 } }));
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "neg", bodyHtml: "<p/>", revision: -1 } }));
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "huge", bodyHtml: "<p/>", revision: Number.MAX_VALUE } }));
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "ok", bodyHtml: "<p/>", revision: 5 } }));
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "frac", bodyHtml: "<p/>", revision: 1.5 } }),
+    );
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "neg", bodyHtml: "<p/>", revision: -1 } }),
+    );
+    a.ws.send(
+      JSON.stringify({
+        type: "draft",
+        data: { title: "huge", bodyHtml: "<p/>", revision: Number.MAX_VALUE },
+      }),
+    );
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "ok", bodyHtml: "<p/>", revision: 5 } }),
+    );
 
     const relayed = await waitFor(() => b.messages.find((m) => m.type === "draft"));
     expect((relayed.data as { title: string }).title).toBe("ok");
@@ -214,9 +234,13 @@ describe("draft collab websocket", () => {
     const a = await openClient(url);
     const b = await openClient(url);
 
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "newer", bodyHtml: "<p/>", revision: 10 } }));
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "newer", bodyHtml: "<p/>", revision: 10 } }),
+    );
     await waitFor(() => b.messages.find((m) => m.type === "draft"));
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "stale", bodyHtml: "<p/>", revision: 5 } }));
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "stale", bodyHtml: "<p/>", revision: 5 } }),
+    );
     // Give the server a moment so a faulty broadcast would land.
     await new Promise((resolve) => setTimeout(resolve, 50));
 
@@ -232,10 +256,16 @@ describe("draft collab websocket", () => {
     const a = await openClient(url);
     const b = await openClient(url);
 
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "first", bodyHtml: "<p/>", revision: 7 } }));
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "second", bodyHtml: "<p/>", revision: 7 } }));
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "first", bodyHtml: "<p/>", revision: 7 } }),
+    );
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "second", bodyHtml: "<p/>", revision: 7 } }),
+    );
 
-    await waitFor(() => (b.messages.filter((m) => m.type === "draft").length >= 2 ? true : undefined));
+    await waitFor(() =>
+      b.messages.filter((m) => m.type === "draft").length >= 2 ? true : undefined,
+    );
     const seqs = b.messages
       .filter((m) => m.type === "draft")
       .map((m) => (m.data as { seq: number }).seq);
@@ -271,7 +301,12 @@ describe("draft collab websocket", () => {
     a.ws.send(JSON.stringify({ type: "comment", data: null }));
     a.ws.send(JSON.stringify({ type: "comment", data: { id: "", text: "no id", createdAt: 1 } }));
     a.ws.send(JSON.stringify({ type: "comment", data: { id: "ok", text: "   ", createdAt: 1 } }));
-    a.ws.send(JSON.stringify({ type: "comment", data: { id: "ok2", text: "kept", createdAt: 1_700_000_000_010 } }));
+    a.ws.send(
+      JSON.stringify({
+        type: "comment",
+        data: { id: "ok2", text: "kept", createdAt: 1_700_000_000_010 },
+      }),
+    );
 
     const relayed = await waitFor(() => b.messages.find((m) => m.type === "comment"));
     expect(relayed.data).toEqual({ id: "ok2", text: "kept", createdAt: 1_700_000_000_010 });
@@ -287,7 +322,9 @@ describe("draft collab websocket", () => {
     a.ws.send("not json");
     a.ws.send(JSON.stringify({ type: "draft" }));
     a.ws.send(JSON.stringify({ type: "draft", data: { title: 1, bodyHtml: "<p/>", revision: 2 } }));
-    a.ws.send(JSON.stringify({ type: "draft", data: { title: "ok", bodyHtml: "<p>ok</p>", revision: 99 } }));
+    a.ws.send(
+      JSON.stringify({ type: "draft", data: { title: "ok", bodyHtml: "<p>ok</p>", revision: 99 } }),
+    );
 
     const relayed = await waitFor(() => b.messages.find((m) => m.type === "draft"));
     expect((relayed.data as { title?: string }).title).toBe("ok");

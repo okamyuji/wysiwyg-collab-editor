@@ -8,18 +8,18 @@
 
 ## v1 合格基準（各項目は機械判定可能であり、2026-07-05時点でローカル実行によりすべてgreenであることを確認済み）
 
-| # | 基準 | 検証方法 |
-|---|---|---|
-| 1 | server・web・export-workerの全ユニットテスト30件（server 14件、web 14件、export-worker 2件）がpassする | `pnpm -r test` が終了コード0 |
-| 2 | 同一 revision を生成した2ピアの更新が決定論的に片方へ確定し、どちらのピアも古い状態へ退行しない | 既存ユニット `assigns increasing seq so equal-revision peers do not silently drop each other`（apps/server/tests/draft-collab.test.ts。項目1に含まれる） |
-| 3 | 同一IDのコメントを重複送信しても状態は1件のみ反映される | 既存ユニット `de-duplicates comments by id (idempotent re-send)`（項目1に含まれる） |
-| 4 | 途中参加クライアントが参加時点の最新文書とコメント全件を受信する | 既存ユニット `late joiners receive the latest snapshot`＋`comments propagate to all peers including the sender (echo) and survive concurrent draft updates`（項目1に含まれる） |
-| 5 | ベースラインのセキュリティヘッダが応答へ付与される | 既存ユニット `sets baseline security headers`（apps/server/tests/main.test.ts。項目1に含まれる） |
-| 6 | 既存E2Eの主要導線7件（編集フロー、パネル開閉、ビューポート維持、2クライアント同期、装飾適用、3形式エクスポート、言語切替）がchromiumとfirefoxでpassする | サーバー新規起動後に `cd e2e && npx playwright test --project=chromium --workers=1 --grep-invert "sanitizes"` と同 `--project=firefox` がそれぞれ終了コード0 |
-| 7 | 型検査が通過する | `pnpm check` が終了コード0 |
-| 8 | 文書lintが Critical 0 / High 0 / Medium 0 / Low 0 を維持する | `python3 tools/lint_docs.py docs/` が終了コード0 |
-| 9 | トレーサビリティ検査が通過する | `node tools/traceability_check.mjs` が終了コード0 |
-| 10 | マイグレーションのdry-runが通過する（migrations/はフェーズ2資産ですが、dry-runはDB接続を伴わない資産整合性検査としてフェーズ1でも維持します） | `node tools/migrate.mjs dry` が終了コード0 |
+| #   | 基準                                                                                                                                                    | 検証方法                                                                                                                                                                       |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | server・web・export-workerの全ユニットテスト30件（server 14件、web 14件、export-worker 2件）がpassする                                                  | `pnpm -r test` が終了コード0                                                                                                                                                   |
+| 2   | 同一 revision を生成した2ピアの更新が決定論的に片方へ確定し、どちらのピアも古い状態へ退行しない                                                         | 既存ユニット `assigns increasing seq so equal-revision peers do not silently drop each other`（apps/server/tests/draft-collab.test.ts。項目1に含まれる）                       |
+| 3   | 同一IDのコメントを重複送信しても状態は1件のみ反映される                                                                                                 | 既存ユニット `de-duplicates comments by id (idempotent re-send)`（項目1に含まれる）                                                                                            |
+| 4   | 途中参加クライアントが参加時点の最新文書とコメント全件を受信する                                                                                        | 既存ユニット `late joiners receive the latest snapshot`＋`comments propagate to all peers including the sender (echo) and survive concurrent draft updates`（項目1に含まれる） |
+| 5   | ベースラインのセキュリティヘッダが応答へ付与される                                                                                                      | 既存ユニット `sets baseline security headers`（apps/server/tests/main.test.ts。項目1に含まれる）                                                                               |
+| 6   | 既存E2Eの主要導線7件（編集フロー、パネル開閉、ビューポート維持、2クライアント同期、装飾適用、3形式エクスポート、言語切替）がchromiumとfirefoxでpassする | サーバー新規起動後に `cd e2e && npx playwright test --project=chromium --workers=1 --grep-invert "sanitizes"` と同 `--project=firefox` がそれぞれ終了コード0                   |
+| 7   | 型検査が通過する                                                                                                                                        | `pnpm check` が終了コード0                                                                                                                                                     |
+| 8   | 文書lintが Critical 0 / High 0 / Medium 0 / Low 0 を維持する                                                                                            | `python3 tools/lint_docs.py docs/` が終了コード0                                                                                                                               |
+| 9   | トレーサビリティ検査が通過する                                                                                                                          | `node tools/traceability_check.mjs` が終了コード0                                                                                                                              |
+| 10  | マイグレーションのdry-runが通過する（migrations/はフェーズ2資産ですが、dry-runはDB接続を伴わない資産整合性検査としてフェーズ1でも維持します）           | `node tools/migrate.mjs dry` が終了コード0                                                                                                                                     |
 
 補足（2026-07-05時点の既知の未達事項。v1の合否には影響しない）:
 

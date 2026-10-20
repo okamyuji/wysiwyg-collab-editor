@@ -1,6 +1,13 @@
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, test } from "vitest";
-import { App, compareDraftKey, detectLocale, loadStoredDraft, nextRevision, normalizeComments } from "../src/app.js";
+import {
+  App,
+  compareDraftKey,
+  detectLocale,
+  loadStoredDraft,
+  nextRevision,
+  normalizeComments,
+} from "../src/app.js";
 
 describe("App", () => {
   test("renders the editor shell", () => {

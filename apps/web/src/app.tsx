@@ -170,7 +170,10 @@ export function normalizeComments(value: unknown): Comment[] {
     // (e.g. 1e20), and `new Date(...).toISOString()` then throws RangeError
     // when the comment list re-renders. Round-trip through Date to drop
     // anything Date can't represent.
-    const candidate = typeof raw.createdAt === "number" && Number.isFinite(raw.createdAt) ? raw.createdAt : Date.now();
+    const candidate =
+      typeof raw.createdAt === "number" && Number.isFinite(raw.createdAt)
+        ? raw.createdAt
+        : Date.now();
     const createdAt = Number.isNaN(new Date(candidate).getTime()) ? Date.now() : candidate;
     if (text.length === 0) return [];
     return [{ id, text, createdAt }];
@@ -354,7 +357,9 @@ export function App() {
     function applyIncomingComment(incoming: Comment) {
       const safe = normalizeComments([incoming])[0];
       if (!safe) return;
-      setComments((current) => (current.some((c) => c.id === safe.id) ? current : [...current, safe]));
+      setComments((current) =>
+        current.some((c) => c.id === safe.id) ? current : [...current, safe],
+      );
     }
 
     function applyIncomingComments(incoming: Comment[]) {
@@ -464,7 +469,9 @@ export function App() {
     const newComment: Comment = { id: safeRandomId(), text, createdAt: Date.now() };
     // Optimistic local append. Server echoes back; the receive path dedupes
     // by id so this is idempotent.
-    setComments((current) => (current.some((c) => c.id === newComment.id) ? current : [...current, newComment]));
+    setComments((current) =>
+      current.some((c) => c.id === newComment.id) ? current : [...current, newComment],
+    );
     const socket = socketRef.current;
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({ type: "comment", data: newComment }));
@@ -657,10 +664,14 @@ export function App() {
                   comments.map((comment) => (
                     <li key={comment.id} className="comment-item" data-testid="comment-item">
                       <p className="comment-text">{comment.text}</p>
-                      <time className="comment-time" dateTime={new Date(comment.createdAt).toISOString()}>
-                        {new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(
-                          new Date(comment.createdAt),
-                        )}
+                      <time
+                        className="comment-time"
+                        dateTime={new Date(comment.createdAt).toISOString()}
+                      >
+                        {new Intl.DateTimeFormat(locale, {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }).format(new Date(comment.createdAt))}
                       </time>
                     </li>
                   ))
