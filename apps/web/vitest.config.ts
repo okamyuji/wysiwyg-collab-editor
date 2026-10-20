@@ -4,6 +4,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    // Node 25+ exposes a global localStorage that is undefined without --localstorage-file and shadows jsdom's.
+    execArgv: ["--no-experimental-webstorage"],
     environmentOptions: {
       jsdom: {
         url: "http://localhost:5173",
