@@ -90,9 +90,9 @@ export function getBrowserStorage(): Storage | null {
 export function loadStoredDraft(fallback: DraftState): DraftState {
   const storage = getBrowserStorage();
   if (!storage) return fallback;
-  const stored = storage.getItem(draftStorageKey);
-  if (!stored) return fallback;
   try {
+    const stored = storage.getItem(draftStorageKey);
+    if (!stored) return fallback;
     const parsed = JSON.parse(stored) as Partial<DraftState>;
     if (typeof parsed.title === "string" && typeof parsed.bodyHtml === "string") {
       // Deliberately discard any persisted revision. Carrying it across
@@ -106,7 +106,7 @@ export function loadStoredDraft(fallback: DraftState): DraftState {
       };
     }
   } catch {
-    storage.removeItem(draftStorageKey);
+    removeStored(draftStorageKey);
   }
   return fallback;
 }
@@ -114,12 +114,42 @@ export function loadStoredDraft(fallback: DraftState): DraftState {
 export function loadStoredComments(): Comment[] {
   const storage = getBrowserStorage();
   if (!storage) return [];
-  const stored = storage.getItem(commentsStorageKey);
-  if (!stored) return [];
   try {
+    const stored = storage.getItem(commentsStorageKey);
+    if (!stored) return [];
     return normalizeComments(JSON.parse(stored));
   } catch {
-    storage.removeItem(commentsStorageKey);
+    removeStored(commentsStorageKey);
     return [];
   }
+}
+
+// Storage access can throw (blocked site data, private mode, quota), and the
+// loaders run during state initialization, so no storage error may escape.
+function removeStored(key: string): void {
+  try {
+    getBrowserStorage()?.removeItem(key);
+  } catch {
+    // Nothing to clean up when storage itself is unavailable.
+  }
+}
+
+export function writeStored(key: string, value: string): boolean {
+  try {
+    const storage = getBrowserStorage();
+    if (!storage) return false;
+    storage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Must match the server's WebSocket maxPayload (apps/server/src/main.ts):
+// a larger frame makes the server close the socket with 1009.
+export const maxSocketMessageBytes = 1024 * 1024;
+
+export function encodeSocketMessage(message: unknown): string | null {
+  const text = JSON.stringify(message);
+  return new TextEncoder().encode(text).byteLength > maxSocketMessageBytes ? null : text;
 }
