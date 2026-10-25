@@ -1,3 +1,4 @@
+import process from "node:process";
 import { pathToFileURL } from "node:url";
 
 export function parsePollIntervalMs(value: string | undefined) {

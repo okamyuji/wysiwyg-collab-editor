@@ -1,8 +1,10 @@
+import { Buffer } from "node:buffer";
 import http from "node:http";
+import process from "node:process";
 import { pathToFileURL } from "node:url";
 import express from "express";
 import helmet from "helmet";
-import { WebSocket, WebSocketServer } from "ws";
+import { type RawData, WebSocket, WebSocketServer } from "ws";
 
 const port = Number.parseInt(process.env.PORT ?? "3000", 10);
 
@@ -93,6 +95,12 @@ function isAllowedOrigin(req: http.IncomingMessage): boolean {
   }
 }
 
+export function rawDataToString(raw: RawData): string {
+  if (Buffer.isBuffer(raw)) return raw.toString("utf8");
+  if (Array.isArray(raw)) return Buffer.concat(raw).toString("utf8");
+  return Buffer.from(raw).toString("utf8");
+}
+
 export function attachDraftCollab(server: http.Server, options: AttachDraftCollabOptions = {}) {
   const heartbeatIntervalMs = options.heartbeatIntervalMs ?? 30_000;
   const path = options.path ?? "/ws/draft";
@@ -150,7 +158,7 @@ export function attachDraftCollab(server: http.Server, options: AttachDraftColla
       ws.on("message", (raw) => {
         let msg: ClientMessage;
         try {
-          msg = JSON.parse(raw.toString());
+          msg = JSON.parse(rawDataToString(raw));
         } catch {
           return;
         }

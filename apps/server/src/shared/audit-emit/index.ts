@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import crypto from "node:crypto";
 import canonicalize from "canonicalize";
 import type { Pool } from "pg";

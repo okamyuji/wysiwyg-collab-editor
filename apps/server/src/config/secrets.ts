@@ -1,3 +1,5 @@
+import { Buffer } from "node:buffer";
+import process from "node:process";
 import { EnvConfigError } from "./env.js";
 
 const AUDIT_SALT_PREFIX = "AUDIT_HASH_SALT_v";

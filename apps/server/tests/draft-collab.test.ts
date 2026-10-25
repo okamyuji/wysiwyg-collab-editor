@@ -2,7 +2,7 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, test } from "vitest";
 import { WebSocket } from "ws";
-import { attachDraftCollab, createApp } from "../src/main.js";
+import { attachDraftCollab, createApp, rawDataToString } from "../src/main.js";
 
 type AnyMessage = {
   type: string;
@@ -42,7 +42,7 @@ function openClient(url: string) {
   ws.once("close", () => clients.delete(ws));
   const messages: AnyMessage[] = [];
   ws.on("message", (raw) => {
-    messages.push(JSON.parse(raw.toString()) as AnyMessage);
+    messages.push(JSON.parse(rawDataToString(raw)) as AnyMessage);
   });
   return new Promise<{ ws: WebSocket; messages: AnyMessage[] }>((resolve, reject) => {
     ws.once("open", () => resolve({ ws, messages }));
