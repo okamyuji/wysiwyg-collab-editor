@@ -18,6 +18,10 @@ import {
 import { sanitizeRichTextHtml } from "./rich-text.js";
 
 const draftSocketPath = "/ws/draft";
+
+function storeComments(comments: Comment[]): boolean {
+  return writeStored(commentsStorageKey, JSON.stringify(comments));
+}
 const reconnectDelayMs = 2_000;
 
 // Same-origin WS, both dev and prod. In dev the Vite plugin attaches the
@@ -44,7 +48,7 @@ const messages = {
     saved: "Saved",
     notSaved: "Not saved",
     draftTooLarge: "This draft is over 1 MiB and is no longer synced to collaborators",
-    storageFailed: "This browser could not save the draft locally",
+    storageFailed: "This browser could not save your draft or comments locally",
     saveDraft: "Save draft",
     online: "Online",
     collaborator: (count: number) => (count === 1 ? "1 collaborator" : `${count} collaborators`),
@@ -97,7 +101,7 @@ const messages = {
     saved: "保存済み",
     notSaved: "未保存",
     draftTooLarge: "下書きが1 MiBを超えたため、共同編集者に同期していません",
-    storageFailed: "このブラウザに下書きを保存できませんでした",
+    storageFailed: "このブラウザに下書きやコメントを保存できませんでした",
     saveDraft: "下書きを保存",
     online: "オンライン",
     collaborator: (count: number) => `共同編集中 ${count} 名`,
@@ -186,7 +190,9 @@ export function App() {
   const [activePanel, setActivePanel] = useState<PanelKey>("comments");
   const [savedAt, setSavedAt] = useState<string>(t.notSaved);
   const [draftTooLarge, setDraftTooLarge] = useState(false);
-  const [storageFailed, setStorageFailed] = useState(false);
+  // Draft and comments are saved from different events; one save succeeding must not hide the other's failure.
+  const [draftStorageFailed, setDraftStorageFailed] = useState(false);
+  const [commentsStorageFailed, setCommentsStorageFailed] = useState(false);
   const [shareEnabled, setShareEnabled] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("PDF");
   const [exportStatus, setExportStatus] = useState("");
@@ -211,10 +217,6 @@ export function App() {
 
   useEffect(() => {
     commentsRef.current = comments;
-  }, [comments]);
-
-  useEffect(() => {
-    writeStored(commentsStorageKey, JSON.stringify(comments));
   }, [comments]);
 
   useEffect(() => {
@@ -247,9 +249,12 @@ export function App() {
     function applyIncomingComment(incoming: Comment) {
       const safe = normalizeComments([incoming])[0];
       if (!safe) return;
-      setComments((current) =>
-        current.some((c) => c.id === safe.id) ? current : [...current, safe],
-      );
+      setComments((current) => {
+        if (current.some((c) => c.id === safe.id)) return current;
+        const next = [...current, safe];
+        setCommentsStorageFailed(!storeComments(next));
+        return next;
+      });
     }
 
     function applyIncomingComments(incoming: Comment[]) {
@@ -259,6 +264,8 @@ export function App() {
         const seen = new Set(current.map((c) => c.id));
         const merged = [...current];
         for (const c of safe) if (!seen.has(c.id)) merged.push(c);
+        if (merged.length === current.length) return current;
+        setCommentsStorageFailed(!storeComments(merged));
         return merged;
       });
     }
@@ -342,7 +349,7 @@ export function App() {
   }, []);
 
   function publish(next: DraftState) {
-    setStorageFailed(!writeStored(draftStorageKey, JSON.stringify(next)));
+    setDraftStorageFailed(!writeStored(draftStorageKey, JSON.stringify(next)));
     // An oversized frame would make the server drop the socket and the
     // reconnect would resend it forever, so it is never sent.
     const text = encodeSocketMessage({ type: "draft", data: next });
@@ -372,9 +379,12 @@ export function App() {
     const newComment: Comment = { id: safeRandomId(), text, createdAt: Date.now() };
     // Optimistic local append. Server echoes back; the receive path dedupes
     // by id so this is idempotent.
-    setComments((current) =>
-      current.some((c) => c.id === newComment.id) ? current : [...current, newComment],
-    );
+    setComments((current) => {
+      if (current.some((c) => c.id === newComment.id)) return current;
+      const next = [...current, newComment];
+      setCommentsStorageFailed(!storeComments(next));
+      return next;
+    });
     const socket = socketRef.current;
     const frame = encodeSocketMessage({ type: "comment", data: newComment });
     if (frame !== null && socket?.readyState === WebSocket.OPEN) {
@@ -448,7 +458,7 @@ export function App() {
               {t.draftTooLarge}
             </span>
           )}
-          {storageFailed && (
+          {(draftStorageFailed || commentsStorageFailed) && (
             <span className="sync-error" role="alert" data-testid="storage-error">
               {t.storageFailed}
             </span>
