@@ -76,6 +76,49 @@ test.describe("Editor UX scaffold", () => {
     await expect(page.getByTestId("storage-error")).toBeVisible();
   });
 
+  test("warns when a comment cannot be saved to local storage", async ({ page }) => {
+    await page.addInitScript(() => {
+      Storage.prototype.setItem = () => {
+        throw new DOMException("full", "QuotaExceededError");
+      };
+    });
+    await page.reload();
+    await expect(page.getByTestId("storage-error")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Comments" }).click();
+    await page.getByPlaceholder("Add a review note").fill("Not persisted note");
+    await page.getByPlaceholder("Add a review note").press("Enter");
+
+    await expect(page.getByTestId("storage-error")).toBeVisible();
+  });
+
+  for (const [label, message] of [
+    ["one comment", { type: "comment", data: { id: "peer-1", text: "From a peer", createdAt: 1 } }],
+    [
+      "a comment list",
+      { type: "comments", data: [{ id: "peer-2", text: "From a peer", createdAt: 1 }] },
+    ],
+  ] as const) {
+    test(`warns when ${label} received from a peer cannot be saved`, async ({ page }) => {
+      // Leave the app first: a reconnect from the old page would receive the peer comment,
+      // save it while storage still works, and the reloaded page would load it as a duplicate.
+      await page.goto("about:blank");
+      await page.addInitScript(() => {
+        Storage.prototype.setItem = () => {
+          throw new DOMException("full", "QuotaExceededError");
+        };
+      });
+      await page.routeWebSocket(/\/ws\/draft$/, (ws) => {
+        ws.send(JSON.stringify(message));
+      });
+      await page.goto("/");
+
+      await page.getByRole("button", { name: "Comments" }).click();
+      await expect(page.getByTestId("side-panel")).toContainText("From a peer");
+      await expect(page.getByTestId("storage-error")).toBeVisible();
+    });
+  }
+
   test("opens comments, share, and export panels", async ({ page }) => {
     await page.goto("/");
 
