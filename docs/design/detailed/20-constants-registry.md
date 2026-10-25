@@ -177,16 +177,16 @@
 
 確定値の出所はnpm registryまたはGitHub releases API(2026-06-28取得)。アップグレード時は本表を更新し、CIゲートを通過させる。
 
-| キー                         | 値     | 区分               | 出所                                                                            |
-| ---------------------------- | ------ | ------------------ | ------------------------------------------------------------------------------- |
-| `RUNTIME_NODE_VERSION`       | 24     | Node.js Active LTS | nodejs.org Release Schedule(LTSは10月にNode.js 26へ移行予定、移行は別ADRで起票) |
-| `RUNTIME_POSTGRES_VERSION`   | 18.4   | major.minor        | endoflife.date PostgreSQL                                                       |
-| `RUNTIME_REDIS_VERSION`      | 8.8.0  | major.minor.patch  | redis/redis releases                                                            |
-| `RUNTIME_PNPM_VERSION`       | 11.9.0 | major.minor.patch  | pnpm/pnpm releases                                                              |
-| `RUNTIME_TYPESCRIPT_VERSION` | 6.0.3  | major.minor.patch  | microsoft/TypeScript releases                                                   |
-| `RUNTIME_VITE_PLUS_VERSION`  | 0.2.1  | major.minor.patch  | voidzero-dev/vite-plus releases                                                 |
-| `RUNTIME_VITEST_VERSION`     | 4.1.9  | major.minor.patch  | vitest-dev/vitest releases(Vite+が内部固定)                                     |
-| `RUNTIME_PLAYWRIGHT_VERSION` | 1.61.1 | major.minor.patch  | microsoft/playwright releases                                                   |
+| キー                         | 値      | 区分               | 出所                                                                            |
+| ---------------------------- | ------- | ------------------ | ------------------------------------------------------------------------------- |
+| `RUNTIME_NODE_VERSION`       | 24      | Node.js Active LTS | nodejs.org Release Schedule(LTSは10月にNode.js 26へ移行予定、移行は別ADRで起票) |
+| `RUNTIME_POSTGRES_VERSION`   | 18.4    | major.minor        | endoflife.date PostgreSQL                                                       |
+| `RUNTIME_REDIS_VERSION`      | 8.8.0   | major.minor.patch  | redis/redis releases                                                            |
+| `RUNTIME_PNPM_VERSION`       | 11.20.0 | major.minor.patch  | pnpm/pnpm releases                                                              |
+| `RUNTIME_TYPESCRIPT_VERSION` | 6.0.3   | major.minor.patch  | microsoft/TypeScript releases                                                   |
+| `RUNTIME_VITE_PLUS_VERSION`  | 0.2.1   | major.minor.patch  | voidzero-dev/vite-plus releases                                                 |
+| `RUNTIME_VITEST_VERSION`     | 4.1.9   | major.minor.patch  | vitest-dev/vitest releases(Vite+が内部固定)                                     |
+| `RUNTIME_PLAYWRIGHT_VERSION` | 1.61.1  | major.minor.patch  | microsoft/playwright releases                                                   |
 
 ## アプリ層ライブラリのバージョン(2026-06-28時点)
 

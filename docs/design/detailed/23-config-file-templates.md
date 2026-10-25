@@ -12,7 +12,7 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=24.0.0" },
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "dev": "pnpm --filter ./apps/web dev & pnpm --filter ./apps/server dev",
     "build": "pnpm -r build",
@@ -210,11 +210,7 @@ paths = ['''^\.env\.example$''']
 
 [allowlist]
 description = "global ignore"
-paths = [
-  '''(^|/)docs/''',
-  '''(^|/)tests/fixtures/''',
-  '''(^|/)e2e/fixtures/''',
-]
+paths = ['''(^|/)docs/''', '''(^|/)tests/fixtures/''', '''(^|/)e2e/fixtures/''']
 ```
 
 ## `.semgrep.yml`
@@ -324,7 +320,7 @@ export default [
 ```dockerfile
 FROM node:24-alpine AS build
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
+RUN corepack enable
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.base.json ./
 COPY apps/server apps/server
 COPY packages packages
@@ -346,7 +342,7 @@ CMD ["dist/main.js"]
 ```dockerfile
 FROM node:24-bookworm-slim
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
+RUN corepack enable
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libnss3 libnspr4 libdbus-1-3 libatk1.0-0 libatk-bridge2.0-0 \
     libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 \
