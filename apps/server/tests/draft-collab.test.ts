@@ -2,7 +2,7 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, test } from "vitest";
 import { WebSocket } from "ws";
-import { attachDraftCollab, createApp } from "../src/main.js";
+import { attachDraftCollab, createApp, rawDataToString } from "../src/main.js";
 
 type AnyMessage = {
   type: string;
@@ -42,7 +42,7 @@ function openClient(url: string) {
   ws.once("close", () => clients.delete(ws));
   const messages: AnyMessage[] = [];
   ws.on("message", (raw) => {
-    messages.push(JSON.parse(raw.toString()) as AnyMessage);
+    messages.push(JSON.parse(rawDataToString(raw)) as AnyMessage);
   });
   return new Promise<{ ws: WebSocket; messages: AnyMessage[] }>((resolve, reject) => {
     ws.once("open", () => resolve({ ws, messages }));
@@ -314,12 +314,32 @@ describe("draft collab websocket", () => {
     await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
   });
 
+  test("closes a socket that sends more than 1 MiB and keeps serving others", async () => {
+    const url = await startServer();
+    const a = await openClient(url);
+    const closed = new Promise<number>((resolve) => a.ws.once("close", (code) => resolve(code)));
+
+    a.ws.send(
+      JSON.stringify({
+        type: "draft",
+        data: { title: "x".repeat(1024 * 1024), bodyHtml: "<p/>", revision: 1 },
+      }),
+    );
+
+    expect(await closed).toBe(1009);
+    const b = await openClient(url);
+    expect(b.ws.readyState).toBe(WebSocket.OPEN);
+    await closeQuiet(b.ws);
+  });
+
   test("ignores malformed messages without dropping the connection", async () => {
     const url = await startServer();
     const a = await openClient(url);
     const b = await openClient(url);
 
     a.ws.send("not json");
+    // Valid JSON that is not an object must not reach property access and crash the process.
+    for (const nonObject of ["null", "1", '"draft"', "[]", "true"]) a.ws.send(nonObject);
     a.ws.send(JSON.stringify({ type: "draft" }));
     a.ws.send(JSON.stringify({ type: "draft", data: { title: 1, bodyHtml: "<p/>", revision: 2 } }));
     a.ws.send(

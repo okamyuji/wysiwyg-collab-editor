@@ -18,7 +18,6 @@ permissions:
 
 env:
   NODE_VERSION: 24
-  PNPM_VERSION: 11.9.0
 
 jobs:
   # gitleaks@v3とGITHUB_TOKEN設定を内蔵した中央ワークフロー。

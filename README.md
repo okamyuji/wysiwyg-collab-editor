@@ -35,7 +35,9 @@ pnpm e2e
 pnpm security:owasp
 ```
 
-formatter / linter は Vite+ の ox ツールチェーンを使います。
+フォーマッタとリンタには、Vite+のoxツールチェーンを使います。
+
+E2EはCIで実行せず、push前にローカル環境で実行します。`pnpm install`が`core.hooksPath`を`.githooks`に設定するので、`git push`のたびに`pnpm e2e`が走ります。webの開発サーバーはPlaywrightが自動で起動します。ブラウザは最初に一度だけ、`pnpm --filter ./e2e exec playwright install`で入れてください。
 
 ## ディレクトリ
 

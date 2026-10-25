@@ -13,6 +13,16 @@ export default defineConfig({
         ["json", { outputFile: "test-results/report.json" }],
       ]
     : [["html", { open: "on-failure" }]],
+  // Starts the web dev server (its Vite plugin hosts the collab socket) unless PREVIEW_URL points elsewhere.
+  ...(process.env.PREVIEW_URL
+    ? {}
+    : {
+        webServer: {
+          command: "pnpm --dir ../apps/web exec vite --host 127.0.0.1 --port 5173 --strictPort",
+          url: "http://localhost:5173",
+          reuseExistingServer: !process.env.CI,
+        },
+      }),
   use: {
     baseURL: process.env.PREVIEW_URL ?? "http://localhost:5173",
     trace: "on-first-retry",

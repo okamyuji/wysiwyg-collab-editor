@@ -1,8 +1,10 @@
+import { Buffer } from "node:buffer";
 import http from "node:http";
+import process from "node:process";
 import { pathToFileURL } from "node:url";
 import express from "express";
 import helmet from "helmet";
-import { WebSocket, WebSocketServer } from "ws";
+import { type RawData, WebSocket, WebSocketServer } from "ws";
 
 const port = Number.parseInt(process.env.PORT ?? "3000", 10);
 
@@ -93,10 +95,35 @@ function isAllowedOrigin(req: http.IncomingMessage): boolean {
   }
 }
 
+// A throw inside a ws "message" listener is uncaught and ends the process, so every
+// shape of untrusted input (invalid JSON, null, primitives, arrays) must return null here.
+function parseClientMessage(
+  raw: RawData,
+): (ClientMessage & { data: Record<string, unknown> }) | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawDataToString(raw));
+  } catch {
+    return null;
+  }
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+  const msg = parsed as ClientMessage;
+  return msg.data ? { ...msg, data: msg.data } : null;
+}
+
+export function rawDataToString(raw: RawData): string {
+  if (Buffer.isBuffer(raw)) return raw.toString("utf8");
+  if (Array.isArray(raw)) return Buffer.concat(raw).toString("utf8");
+  return Buffer.from(raw).toString("utf8");
+}
+
 export function attachDraftCollab(server: http.Server, options: AttachDraftCollabOptions = {}) {
   const heartbeatIntervalMs = options.heartbeatIntervalMs ?? 30_000;
   const path = options.path ?? "/ws/draft";
-  const wss = new WebSocketServer({ noServer: true });
+  // ws defaults to 100 MiB per message; the room is unauthenticated, so cap it like express.json above.
+  // shortcut: a draft whose HTML exceeds 1 MiB is refused and the client keeps reconnecting silently;
+  // raise the cap or size-check in the client before documents can grow that large.
+  const wss = new WebSocketServer({ noServer: true, maxPayload: 1024 * 1024 });
   const liveness = new WeakMap<WebSocket, boolean>();
   const peers = new Set<WebSocket>();
   let latest: DraftState | null = null;
@@ -148,13 +175,8 @@ export function attachDraftCollab(server: http.Server, options: AttachDraftColla
       });
 
       ws.on("message", (raw) => {
-        let msg: ClientMessage;
-        try {
-          msg = JSON.parse(raw.toString());
-        } catch {
-          return;
-        }
-        if (!msg.data) return;
+        const msg = parseClientMessage(raw);
+        if (!msg) return;
         if (msg.type === "draft") {
           const validated = validateDraftPayload(msg.data);
           if (!validated) return;

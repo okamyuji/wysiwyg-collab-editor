@@ -1,3 +1,4 @@
+import { Server } from "node:http";
 import react from "@vitejs/plugin-react";
 import { type Plugin, defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -12,7 +13,8 @@ function draftCollabPlugin(): Plugin {
   return {
     name: "draft-collab",
     configureServer(server) {
-      if (!server.httpServer) return;
+      // Vite types httpServer as http.Server | Http2SecureServer; only the former emits the plain "upgrade" events the collab server needs.
+      if (!(server.httpServer instanceof Server)) return;
       attachDraftCollab(server.httpServer);
       // ponytail: only log once per dev process; HMR reloads re-evaluate
       // configureServer? No — only on full restart. So this is fine.
@@ -20,7 +22,8 @@ function draftCollabPlugin(): Plugin {
       console.info("[draft-collab] WebSocket attached at /ws/draft");
     },
     configurePreviewServer(server) {
-      if (!server.httpServer) return;
+      // Vite types httpServer as http.Server | Http2SecureServer; only the former emits the plain "upgrade" events the collab server needs.
+      if (!(server.httpServer instanceof Server)) return;
       attachDraftCollab(server.httpServer);
     },
   };

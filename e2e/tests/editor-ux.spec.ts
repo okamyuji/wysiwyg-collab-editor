@@ -1,7 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import process from "node:process";
 import { PDFDocument } from "pdf-lib";
 import { strFromU8, unzipSync } from "fflate";
 
@@ -9,6 +10,7 @@ test.describe("Editor UX scaffold", () => {
   test.use({ locale: "en-US" });
 
   test.beforeEach(async ({ page }) => {
+    await isolateFromSharedRoom(page);
     await page.goto("/");
     await page.evaluate(() => localStorage.clear());
     await page.reload();
@@ -23,6 +25,26 @@ test.describe("Editor UX scaffold", () => {
     await page.getByRole("button", { name: "Save draft" }).click();
 
     await expect(page.getByTestId("sync-status")).toContainText(/Saved: \d/);
+  });
+
+  test("restores a saved draft and comments after a reload", async ({ page }) => {
+    await page.getByTestId("document-title").fill("Restored title");
+    await page.getByTestId("document-body").fill("Body that must survive a reload.");
+    await page.getByRole("button", { name: "Save draft" }).click();
+    await expect(page.getByTestId("sync-status")).toContainText(/Saved: \d/);
+    await page.getByRole("button", { name: "Comments" }).click();
+    await page.getByPlaceholder("Add a review note").fill("Comment that must survive");
+    await page.getByPlaceholder("Add a review note").press("Enter");
+    await expect(page.getByTestId("side-panel")).toContainText("Comment that must survive");
+
+    await page.reload();
+
+    await expect(page.getByTestId("document-title")).toHaveValue("Restored title");
+    await expect(page.getByTestId("document-body")).toContainText(
+      "Body that must survive a reload.",
+    );
+    await page.getByRole("button", { name: "Comments" }).click();
+    await expect(page.getByTestId("side-panel")).toContainText("Comment that must survive");
   });
 
   test("opens comments, share, and export panels", async ({ page }) => {
@@ -196,6 +218,13 @@ test.describe("Editor UX scaffold", () => {
   });
 });
 
+// The dev server keeps one in-memory collab room and replays its latest draft on connect. Tests
+// run in parallel, so a real socket would hand each page another test's draft. Single-page tests
+// get a silent mock socket; only the two-collaborator test talks to the real room.
+async function isolateFromSharedRoom(page: Page) {
+  await page.routeWebSocket(/\/ws\/draft$/, () => {});
+}
+
 async function downloadExport(
   page: import("@playwright/test").Page,
   format: string,
@@ -216,6 +245,7 @@ test.describe("Japanese locale", () => {
   test.use({ locale: "ja-JP" });
 
   test("switches UI copy from browser language", async ({ page }) => {
+    await isolateFromSharedRoom(page);
     await page.goto("/");
     await page.evaluate(() => localStorage.clear());
     await page.reload();

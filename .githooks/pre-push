@@ -1,0 +1,5 @@
+#!/bin/sh
+# E2E is not run in CI (too slow there), so every push runs it locally first.
+# Playwright starts the web dev server itself; install browsers once with
+#   pnpm --filter ./e2e exec playwright install
+exec pnpm e2e

@@ -1,3 +1,5 @@
+import { Buffer } from "node:buffer";
+import process from "node:process";
 import { z, type RefinementCtx } from "zod";
 
 const LOG_LEVELS = ["fatal", "error", "warn", "info", "debug", "trace"] as const;
