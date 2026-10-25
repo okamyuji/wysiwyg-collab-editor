@@ -61,6 +61,21 @@ test.describe("Editor UX scaffold", () => {
     await expect(page.getByTestId("sync-error")).toBeVisible();
   });
 
+  test("warns when the draft cannot be saved to local storage", async ({ page }) => {
+    await page.getByTestId("document-title").fill("Persisted");
+    await expect(page.getByTestId("storage-error")).toHaveCount(0);
+
+    await page.addInitScript(() => {
+      Storage.prototype.setItem = () => {
+        throw new DOMException("full", "QuotaExceededError");
+      };
+    });
+    await page.reload();
+    await page.getByTestId("document-title").fill("Not persisted");
+
+    await expect(page.getByTestId("storage-error")).toBeVisible();
+  });
+
   test("opens comments, share, and export panels", async ({ page }) => {
     await page.goto("/");
 

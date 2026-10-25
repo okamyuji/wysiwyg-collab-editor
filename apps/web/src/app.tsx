@@ -44,6 +44,7 @@ const messages = {
     saved: "Saved",
     notSaved: "Not saved",
     draftTooLarge: "This draft is over 1 MiB and is no longer synced to collaborators",
+    storageFailed: "This browser could not save the draft locally",
     saveDraft: "Save draft",
     online: "Online",
     collaborator: (count: number) => (count === 1 ? "1 collaborator" : `${count} collaborators`),
@@ -96,6 +97,7 @@ const messages = {
     saved: "保存済み",
     notSaved: "未保存",
     draftTooLarge: "下書きが1 MiBを超えたため、共同編集者に同期していません",
+    storageFailed: "このブラウザに下書きを保存できませんでした",
     saveDraft: "下書きを保存",
     online: "オンライン",
     collaborator: (count: number) => `共同編集中 ${count} 名`,
@@ -184,6 +186,7 @@ export function App() {
   const [activePanel, setActivePanel] = useState<PanelKey>("comments");
   const [savedAt, setSavedAt] = useState<string>(t.notSaved);
   const [draftTooLarge, setDraftTooLarge] = useState(false);
+  const [storageFailed, setStorageFailed] = useState(false);
   const [shareEnabled, setShareEnabled] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("PDF");
   const [exportStatus, setExportStatus] = useState("");
@@ -339,7 +342,7 @@ export function App() {
   }, []);
 
   function publish(next: DraftState) {
-    writeStored(draftStorageKey, JSON.stringify(next));
+    setStorageFailed(!writeStored(draftStorageKey, JSON.stringify(next)));
     // An oversized frame would make the server drop the socket and the
     // reconnect would resend it forever, so it is never sent.
     const text = encodeSocketMessage({ type: "draft", data: next });
@@ -443,6 +446,11 @@ export function App() {
           {draftTooLarge && (
             <span className="sync-error" role="alert" data-testid="sync-error">
               {t.draftTooLarge}
+            </span>
+          )}
+          {storageFailed && (
+            <span className="sync-error" role="alert" data-testid="storage-error">
+              {t.storageFailed}
             </span>
           )}
           <button className="primary-action" type="button" onClick={saveDraft}>
