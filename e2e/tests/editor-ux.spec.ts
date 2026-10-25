@@ -36,6 +36,10 @@ test.describe("Editor UX scaffold", () => {
     await page.getByPlaceholder("Add a review note").fill("Comment that must survive");
     await page.getByPlaceholder("Add a review note").press("Enter");
     await expect(page.getByTestId("side-panel")).toContainText("Comment that must survive");
+    // The visible comment proves the state update, not the effect that writes it to storage.
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem("wysiwyg-collab-editor:comments") ?? ""))
+      .toContain("Comment that must survive");
 
     await page.reload();
 
@@ -45,6 +49,16 @@ test.describe("Editor UX scaffold", () => {
     );
     await page.getByRole("button", { name: "Comments" }).click();
     await expect(page.getByTestId("side-panel")).toContainText("Comment that must survive");
+  });
+
+  test("warns instead of syncing a draft larger than the 1 MiB socket limit", async ({ page }) => {
+    await expect(page.getByTestId("sync-error")).toHaveCount(0);
+
+    // WebKit caps an <input> at 524,288 characters, so the oversize comes from
+    // 3-byte UTF-8 characters: 400,000 of them are about 1.2 MB on the wire.
+    await page.getByTestId("document-title").fill("あ".repeat(400_000));
+
+    await expect(page.getByTestId("sync-error")).toBeVisible();
   });
 
   test("opens comments, share, and export panels", async ({ page }) => {

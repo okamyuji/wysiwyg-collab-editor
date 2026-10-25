@@ -7,12 +7,13 @@ import {
   compareDraftKey,
   detectLocale,
   draftStorageKey,
-  getBrowserStorage,
+  encodeSocketMessage,
   loadStoredComments,
   loadStoredDraft,
   nextRevision,
   normalizeComments,
   safeRandomId,
+  writeStored,
 } from "./draft-state.js";
 import { sanitizeRichTextHtml } from "./rich-text.js";
 
@@ -42,6 +43,7 @@ const messages = {
     brand: "WYSIWYG Collab",
     saved: "Saved",
     notSaved: "Not saved",
+    draftTooLarge: "This draft is over 1 MiB and is no longer synced to collaborators",
     saveDraft: "Save draft",
     online: "Online",
     collaborator: (count: number) => (count === 1 ? "1 collaborator" : `${count} collaborators`),
@@ -93,6 +95,7 @@ const messages = {
     brand: "WYSIWYG Collab",
     saved: "保存済み",
     notSaved: "未保存",
+    draftTooLarge: "下書きが1 MiBを超えたため、共同編集者に同期していません",
     saveDraft: "下書きを保存",
     online: "オンライン",
     collaborator: (count: number) => `共同編集中 ${count} 名`,
@@ -180,6 +183,7 @@ export function App() {
   const [draft, setDraft] = useState<DraftState>(() => loadStoredDraft(fallbackDraft));
   const [activePanel, setActivePanel] = useState<PanelKey>("comments");
   const [savedAt, setSavedAt] = useState<string>(t.notSaved);
+  const [draftTooLarge, setDraftTooLarge] = useState(false);
   const [shareEnabled, setShareEnabled] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("PDF");
   const [exportStatus, setExportStatus] = useState("");
@@ -207,7 +211,7 @@ export function App() {
   }, [comments]);
 
   useEffect(() => {
-    getBrowserStorage()?.setItem(commentsStorageKey, JSON.stringify(comments));
+    writeStored(commentsStorageKey, JSON.stringify(comments));
   }, [comments]);
 
   useEffect(() => {
@@ -263,12 +267,18 @@ export function App() {
       // those windows is persisted locally but never reaches peers.
       const currentDraft = draftRef.current;
       if (currentDraft.revision > sentDraftRevisionRef.current) {
-        ws.send(JSON.stringify({ type: "draft", data: currentDraft }));
-        sentDraftRevisionRef.current = currentDraft.revision;
+        const text = encodeSocketMessage({ type: "draft", data: currentDraft });
+        setDraftTooLarge(text === null);
+        if (text !== null) {
+          ws.send(text);
+          sentDraftRevisionRef.current = currentDraft.revision;
+        }
       }
       for (const c of commentsRef.current) {
         if (!sentCommentIdsRef.current.has(c.id)) {
-          ws.send(JSON.stringify({ type: "comment", data: c }));
+          const text = encodeSocketMessage({ type: "comment", data: c });
+          if (text === null) continue;
+          ws.send(text);
           sentCommentIdsRef.current.add(c.id);
         }
       }
@@ -296,7 +306,9 @@ export function App() {
           applyIncomingComments(message.data);
         }
       };
-      ws.onclose = () => {
+      ws.onclose = (event) => {
+        // 1009 means the server refused a frame over its maxPayload.
+        if (event.code === 1009) setDraftTooLarge(true);
         // Identity check: in React StrictMode the first effect's socket gets
         // closed AFTER the second effect has already installed a new socket
         // in socketRef. Unguarded `socketRef.current = null` would clobber
@@ -327,10 +339,15 @@ export function App() {
   }, []);
 
   function publish(next: DraftState) {
-    getBrowserStorage()?.setItem(draftStorageKey, JSON.stringify(next));
+    writeStored(draftStorageKey, JSON.stringify(next));
+    // An oversized frame would make the server drop the socket and the
+    // reconnect would resend it forever, so it is never sent.
+    const text = encodeSocketMessage({ type: "draft", data: next });
+    setDraftTooLarge(text === null);
+    if (text === null) return;
     const socket = socketRef.current;
     if (socket?.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ type: "draft", data: next }));
+      socket.send(text);
       sentDraftRevisionRef.current = next.revision;
     }
     // If socket isn't OPEN yet, flushPending() will pick this up on the next
@@ -356,8 +373,9 @@ export function App() {
       current.some((c) => c.id === newComment.id) ? current : [...current, newComment],
     );
     const socket = socketRef.current;
-    if (socket?.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ type: "comment", data: newComment }));
+    const frame = encodeSocketMessage({ type: "comment", data: newComment });
+    if (frame !== null && socket?.readyState === WebSocket.OPEN) {
+      socket.send(frame);
       sentCommentIdsRef.current.add(newComment.id);
     }
     // If socket isn't OPEN yet, flushPending() will replay this on reconnect
@@ -422,6 +440,11 @@ export function App() {
           <span className="sync-status" data-testid="sync-status">
             {t.saved}: {savedAt}
           </span>
+          {draftTooLarge && (
+            <span className="sync-error" role="alert" data-testid="sync-error">
+              {t.draftTooLarge}
+            </span>
+          )}
           <button className="primary-action" type="button" onClick={saveDraft}>
             {t.saveDraft}
           </button>
