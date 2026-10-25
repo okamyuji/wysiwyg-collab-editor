@@ -95,6 +95,22 @@ function isAllowedOrigin(req: http.IncomingMessage): boolean {
   }
 }
 
+// A throw inside a ws "message" listener is uncaught and ends the process, so every
+// shape of untrusted input (invalid JSON, null, primitives, arrays) must return null here.
+function parseClientMessage(
+  raw: RawData,
+): (ClientMessage & { data: Record<string, unknown> }) | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawDataToString(raw));
+  } catch {
+    return null;
+  }
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+  const msg = parsed as ClientMessage;
+  return msg.data ? { ...msg, data: msg.data } : null;
+}
+
 export function rawDataToString(raw: RawData): string {
   if (Buffer.isBuffer(raw)) return raw.toString("utf8");
   if (Array.isArray(raw)) return Buffer.concat(raw).toString("utf8");
@@ -156,13 +172,8 @@ export function attachDraftCollab(server: http.Server, options: AttachDraftColla
       });
 
       ws.on("message", (raw) => {
-        let msg: ClientMessage;
-        try {
-          msg = JSON.parse(rawDataToString(raw));
-        } catch {
-          return;
-        }
-        if (!msg.data) return;
+        const msg = parseClientMessage(raw);
+        if (!msg) return;
         if (msg.type === "draft") {
           const validated = validateDraftPayload(msg.data);
           if (!validated) return;

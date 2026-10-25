@@ -320,6 +320,8 @@ describe("draft collab websocket", () => {
     const b = await openClient(url);
 
     a.ws.send("not json");
+    // Valid JSON that is not an object must not reach property access and crash the process.
+    for (const nonObject of ["null", "1", '"draft"', "[]", "true"]) a.ws.send(nonObject);
     a.ws.send(JSON.stringify({ type: "draft" }));
     a.ws.send(JSON.stringify({ type: "draft", data: { title: 1, bodyHtml: "<p/>", revision: 2 } }));
     a.ws.send(
