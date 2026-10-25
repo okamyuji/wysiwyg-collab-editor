@@ -120,7 +120,10 @@ export function rawDataToString(raw: RawData): string {
 export function attachDraftCollab(server: http.Server, options: AttachDraftCollabOptions = {}) {
   const heartbeatIntervalMs = options.heartbeatIntervalMs ?? 30_000;
   const path = options.path ?? "/ws/draft";
-  const wss = new WebSocketServer({ noServer: true });
+  // ws defaults to 100 MiB per message; the room is unauthenticated, so cap it like express.json above.
+  // shortcut: a draft whose HTML exceeds 1 MiB is refused and the client keeps reconnecting silently;
+  // raise the cap or size-check in the client before documents can grow that large.
+  const wss = new WebSocketServer({ noServer: true, maxPayload: 1024 * 1024 });
   const liveness = new WeakMap<WebSocket, boolean>();
   const peers = new Set<WebSocket>();
   let latest: DraftState | null = null;

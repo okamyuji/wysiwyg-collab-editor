@@ -314,6 +314,24 @@ describe("draft collab websocket", () => {
     await Promise.all([closeQuiet(a.ws), closeQuiet(b.ws)]);
   });
 
+  test("closes a socket that sends more than 1 MiB and keeps serving others", async () => {
+    const url = await startServer();
+    const a = await openClient(url);
+    const closed = new Promise<number>((resolve) => a.ws.once("close", (code) => resolve(code)));
+
+    a.ws.send(
+      JSON.stringify({
+        type: "draft",
+        data: { title: "x".repeat(1024 * 1024), bodyHtml: "<p/>", revision: 1 },
+      }),
+    );
+
+    expect(await closed).toBe(1009);
+    const b = await openClient(url);
+    expect(b.ws.readyState).toBe(WebSocket.OPEN);
+    await closeQuiet(b.ws);
+  });
+
   test("ignores malformed messages without dropping the connection", async () => {
     const url = await startServer();
     const a = await openClient(url);
