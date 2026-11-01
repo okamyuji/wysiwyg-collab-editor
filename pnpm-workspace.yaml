@@ -17,6 +17,9 @@ overrides:
   undici@<7.30.1: "7.30.1"
   serialize-javascript@<7.1.3: "7.1.3"
   fast-uri@<3.1.9: "3.1.9"
+  # workbox-build 7.4.1（最新）が glob ^11、filelist 2.0.2（最新）が minimatch ^10 を求めるため、修正版へ上書きする
+  glob@>=9.0.0 <14.0.2: "14.0.3"
+  minimatch@<11.0.1: "11.0.3"
 
 # 公開から3日未満の版を取得しない。pnpm 11 は .npmrc の minimum-release-age を読まないため、ここに書く。
 minimumReleaseAge: 4320 # 60 * 24 * 3 = 3日（分）
