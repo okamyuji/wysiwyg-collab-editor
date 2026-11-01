@@ -12,6 +12,9 @@
     "./error-codes": "./dist/error-codes/index.js",
     "./palette": "./dist/palette/index.js"
   },
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
   "dependencies": {
     "zod": "4.6.7"
   },

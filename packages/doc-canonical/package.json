@@ -7,6 +7,9 @@
   "exports": {
     ".": "./dist/index.js"
   },
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
   "devDependencies": {
     "typescript": "7.0.2"
   }
