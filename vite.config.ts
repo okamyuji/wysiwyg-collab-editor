@@ -5,13 +5,6 @@ export default defineConfig({
     semi: true,
     printWidth: 100,
     sortPackageJson: false,
-    ignorePatterns: [
-      "node_modules",
-      "dist",
-      "coverage",
-      "playwright-report",
-      "test-results",
-      ".wolf",
-    ],
+    ignorePatterns: ["node_modules", "dist", "coverage", "playwright-report", "test-results"],
   },
 });
